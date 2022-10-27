@@ -49,6 +49,7 @@ public class Main extends JavaPlugin {
         config.options().copyDefaults(true);
         saveConfig();
 
+
         new GameManager(1, 0, 0, GameManager.GameStatus.WAITING);
 
     }
