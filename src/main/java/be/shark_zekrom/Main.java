@@ -50,7 +50,7 @@ public class Main extends JavaPlugin {
         saveConfig();
 
 
-        new GameManager(1, 0, 0, GameManager.GameStatus.WAITING);
+        new GameManager();
 
     }
 

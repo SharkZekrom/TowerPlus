@@ -16,8 +16,8 @@ public class Commands implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        if (args[0].equals("clone")) {
-            WorldManager.cloneWorld();
+        if (args[0].equals("add")) {
+            new GameManager();
         }
 
         if (args[0].equals("delete")) {
@@ -25,6 +25,9 @@ public class Commands implements CommandExecutor {
         }
         if (args[0].equals("status")) {
             Bukkit.broadcastMessage(GameManager.games.size() + "");
+        }
+        if (args[0].equals("inventory")) {
+            Gui.allGames(player);
         }
         return true;
     }

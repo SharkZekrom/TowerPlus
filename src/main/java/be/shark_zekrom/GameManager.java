@@ -28,19 +28,19 @@ public class GameManager {
         this.gameRedPoints = gameRedPoints;
     }
 
-    int gameStatus;
-    public int getGameStatus() {
+    GameStatus gameStatus;
+    public GameStatus getGameStatus() {
         return gameStatus;
     }
-    public void setGameStatus(int gameStatus) {
+    public void setGameStatus(GameStatus gameStatus) {
         this.gameStatus = gameStatus;
     }
 
-    public GameManager(int id, int bluePoints, int redPoints, GameStatus status) {
-        gameId = id;
-        gameBluePoints = bluePoints;
-        gameRedPoints = redPoints;
-        gameStatus = status.ordinal();
+    public GameManager() {
+        gameId = games.size() + 1;
+        gameBluePoints = 0;
+        gameRedPoints = 0;
+        gameStatus = GameStatus.WAITING;
 
         WorldManager.cloneWorld();
         GameManager.games.add(this);
