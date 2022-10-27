@@ -8,6 +8,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+
 public class Gui {
 
 
@@ -16,23 +18,36 @@ public class Gui {
         player.openInventory(inventory);
         for (int i = 0; i < GameManager.games.size(); i++) {
 
+            GameManager game = GameManager.getGameById(i + 1);
+
             ItemStack itemStack = null;
-            switch (GameManager.getGameById(i + 1).getGameStatus()) {
+            ArrayList<String> lore = new ArrayList<>();
+            switch (game.getGameStatus()) {
                 case WAITING:
                     itemStack = new ItemStack(Material.GREEN_WOOL);
+                    lore.add("Status: Waiting");
+                    lore.add("Players: " + game.getPlayers());
                     break;
                 case STARTING:
-                   itemStack = new ItemStack(Material.YELLOW_WOOL);
+                    itemStack = new ItemStack(Material.YELLOW_WOOL);
+                    lore.add("Status: Starting");
+                    lore.add("Players: " + game.getPlayers());
+                    lore.add("Countdown: " + game.getCountdown());
                     break;
                 case INGAME:
                     itemStack = new ItemStack(Material.RED_WOOL);
+                    lore.add("Status: Starting");
+                    lore.add("Players: " + game.getPlayers());
+                    lore.add("Red : " + game.getGameRedPoints() + "(" + game.getRedPlayers().size() + ")");
+                    lore.add("Blue : " + game.getGameBluePoints() + "(" + game.getRedPlayers().size() + ")");
+
                     break;
                 case ENDING:
                     itemStack = new ItemStack(Material.BLACK_WOOL);
                     break;
             }
-
             ItemMeta itemMeta = itemStack.getItemMeta();
+            itemMeta.setLore(lore);
             itemMeta.setDisplayName("Game " + (i + 1));
             itemStack.setItemMeta(itemMeta);
 
