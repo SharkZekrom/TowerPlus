@@ -31,6 +31,8 @@ public class Main extends JavaPlugin {
 
         this.getCommand("tower+").setExecutor(new Commands());
 
+        pm.registerEvents(new Gui(), this);
+
 
 
         FileConfiguration config = getConfig();
