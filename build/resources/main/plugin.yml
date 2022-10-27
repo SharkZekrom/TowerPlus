@@ -1,0 +1,10 @@
+name: TowerPlus
+version: 1.0.0
+main: be.shark_zekrom.Main
+api-version: 1.13
+author: shark_zekrom
+softdepend: ['Multiverse-Core']
+load: POSTWORLD
+commands:
+    tower+:
+        description: tower
