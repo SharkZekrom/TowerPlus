@@ -35,7 +35,7 @@ public class Gui implements Listener {
                 case WAITING:
                     itemStack = new ItemStack(Material.GREEN_WOOL);
                     lore.add("Status: Waiting");
-                    lore.add("Players: " + game.getPlayers());
+                    lore.add("Players: " + game.getPlayers().size());
                     break;
                 case STARTING:
                     itemStack = new ItemStack(Material.YELLOW_WOOL);
@@ -77,12 +77,13 @@ public class Gui implements Listener {
                     String id = event.getInventory().getItem(slot).getItemMeta().getDisplayName().replaceAll("[ a-zA-Z]", "");
 
                     GameManager.getGameById(Integer.parseInt(id)).addPlayer(player);
-
-
                     FastBoard board = new FastBoard(player);
+                    board.updateTitle("Tower+");
+
                     GameManager.boards.put(player.getUniqueId(), board);
 
                     player.teleport(new Location(Bukkit.getWorld("TowerPlus_" + id), 0, -60,0));
+                    GameManager.waitingInventory(player);
 
 
 

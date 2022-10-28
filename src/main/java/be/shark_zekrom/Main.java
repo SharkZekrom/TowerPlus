@@ -33,6 +33,7 @@ public class Main extends JavaPlugin {
         this.getCommand("tower+").setExecutor(new Commands());
 
         pm.registerEvents(new Gui(), this);
+        pm.registerEvents(new Events(), this);
 
         getServer().getScheduler().runTaskTimer(this, () -> {
             for (FastBoard board : GameManager.boards.values()) {

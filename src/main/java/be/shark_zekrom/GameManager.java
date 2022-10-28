@@ -16,6 +16,7 @@ public class GameManager {
 
     public static final Map<UUID, FastBoard> boards = new HashMap<>();
     public static ArrayList<GameManager> games = new ArrayList<>();
+
     int gameId;
     public int getGameId() {
         return gameId;
@@ -54,7 +55,7 @@ public class GameManager {
     }
 
 
-    ArrayList<Player> players = new ArrayList<>();
+    ArrayList<Player> players;
     public ArrayList<Player> getPlayers() {
         return players;
     }
@@ -64,7 +65,26 @@ public class GameManager {
     }
     public void removePlayer(Player player) {
         this.players.remove(player);
+
+        getRedPlayers().remove(player);
+        getBluePlayers().remove(player);
+
+        FastBoard board = boards.remove(player.getUniqueId());
+        if (board != null) {
+            board.delete();
+        }
     }
+    public static boolean hasPlayer(Player player) {
+        boolean hasPlayer = false;
+        for (GameManager gameManager : games) {
+            if (gameManager.getPlayers().contains(player)) {
+                hasPlayer = true;
+                break;
+            }
+        }
+        return hasPlayer;
+    }
+
 
     ArrayList<Player> redPlayers;
     public ArrayList<Player> getRedPlayers() {
@@ -90,15 +110,25 @@ public class GameManager {
 
     public static int getGameIdByPlayer(Player player) {
         int id = 0;
-        for (int i = 0; i < games.size(); i++) {
-            GameManager game = GameManager.getGameById(i + 1);
-            if (game.getPlayers().contains(player)) {
-                id = i + 1;
+        for (GameManager gameManager : games) {
+            if (gameManager.getPlayers().contains(player)) {
+                id = gameManager.getGameId();
+                break;
             }
         }
-
         return id;
 
+    }
+
+    public static GameManager getGameByPlayer(Player player) {
+        GameManager gameManager = null;
+        for (GameManager gameManager1 : games) {
+            if (gameManager1.getPlayers().contains(player)) {
+                gameManager = gameManager1;
+                break;
+            }
+        }
+        return gameManager;
     }
 
 
@@ -143,7 +173,6 @@ public class GameManager {
 
         switch (game.getGameStatus()) {
             case WAITING:
-                board.
                 board.updateLines(
                         "Waiting for players",
                         "",
@@ -170,4 +199,16 @@ public class GameManager {
                 break;
         }
     }
+
+
+    public static void waitingInventory(Player player) {
+        player.getInventory().clear();
+        player.getInventory().setItem(8, new ItemStack(Material.BARRIER));
+    }
+
+    public static void returnInventory(Player player) {
+
+    }
+
+
 }
