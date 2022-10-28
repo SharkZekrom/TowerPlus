@@ -14,8 +14,6 @@ public class GameManager {
     public static final Map<UUID, FastBoard> boards = new HashMap<>();
     public static ArrayList<GameManager> games = new ArrayList<>();
 
-    public static int maxPlayers, minPlayers, points, countdown;
-
     int gameId;
 
     public int getGameId() {
@@ -32,7 +30,7 @@ public class GameManager {
         bluePoints++;
         Bukkit.broadcastMessage("Blue team has scored a point! (" + bluePoints + ")");
         player.teleport(new Location(player.getWorld(), 0, -42, 0));
-        if (bluePoints == points) {
+        if (bluePoints == Main.points) {
             this.setGameStatus(GameStatus.ENDING);
             endGame(this, "blue");
         }
@@ -52,7 +50,7 @@ public class GameManager {
         redPoints++;
         Bukkit.broadcastMessage("Red team has scored a point! (" + redPoints + ")");
         player.teleport(new Location(player.getWorld(), 0, -42, 0));
-        if (redPoints == points) {
+        if (redPoints == Main.points) {
             this.setGameStatus(GameStatus.ENDING);
             endGame(this, "red");
         }
@@ -72,14 +70,13 @@ public class GameManager {
         this.gameStatus = gameStatus;
     }
 
+    int countdown;
     public int getCountdown() {
-        return countdown;
+        return this.countdown;
     }
-
     public void setCountdown(int countdown) {
         this.countdown = countdown;
     }
-
 
     ArrayList<Player> players;
 
@@ -156,14 +153,14 @@ public class GameManager {
     }
 
     public static GameManager getGameByPlayer(Player player) {
-        GameManager gameManager = null;
-        for (GameManager gameManager1 : games) {
-            if (gameManager1.getPlayers().contains(player)) {
-                gameManager = gameManager1;
+        GameManager game = null;
+        for (GameManager gameManager : games) {
+            if (gameManager.getPlayers().contains(player)) {
+                game = gameManager;
                 break;
             }
         }
-        return gameManager;
+        return game;
     }
 
 
@@ -171,6 +168,7 @@ public class GameManager {
         gameId = ++Main.id;
         bluePoints = 0;
         redPoints = 0;
+        countdown = Main.countdown;
         gameStatus = GameStatus.WAITING;
         players = new ArrayList<>();
         redPlayers = new ArrayList<>();
@@ -195,13 +193,7 @@ public class GameManager {
     }
 
 
-    public enum GameStatus {
-        WAITING,
-        STARTING,
-        INGAME,
-        ENDING
-
-    }
+    public enum GameStatus {WAITING, STARTING, INGAME, ENDING}
 
 
     public static void updateBoard(FastBoard board) {
@@ -212,21 +204,21 @@ public class GameManager {
                 board.updateLines(
                         "Waiting for players",
                         "ID > TowerPlus-" + game.getGameId(),
-                        "players: " + game.getPlayers().size() + "/" + maxPlayers
+                        "players: " + game.getPlayers().size() + "/" + Main.maxPlayers
                 );
                 break;
             case STARTING:
                 board.updateLines(
                         "Starting in " + game.getCountdown(),
                         "ID > TowerPlus-" + game.getGameId(),
-                        "players: " + game.getPlayers().size() + "/" + maxPlayers
+                        "players: " + game.getPlayers().size() + "/" + Main.maxPlayers
                 );
                 break;
             case INGAME:
                 board.updateLines(
                         "Red points: " + game.getRedPoints(),
                         "Blue points: " + game.getBluePoints(),
-                        "players: " + game.getPlayers().size() + "/" + maxPlayers
+                        "players: " + game.getPlayers().size() + "/" + Main.maxPlayers
 
 
                 );
