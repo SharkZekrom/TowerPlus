@@ -1,8 +1,5 @@
 package be.shark_zekrom;
 
-import com.onarandombox.MultiverseCore.MVWorld;
-import com.onarandombox.MultiverseCore.api.MVWorldManager;
-import com.onarandombox.MultiverseCore.api.MultiverseWorld;
 import fr.mrmicky.fastboard.FastBoard;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -10,14 +7,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.ItemMergeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Gui implements Listener {
@@ -48,8 +43,8 @@ public class Gui implements Listener {
                     itemStack = new ItemStack(Material.RED_WOOL);
                     lore.add("Status: INGAME");
                     lore.add("Players: " + game.getPlayers());
-                    lore.add("Red : " + game.getGameRedPoints() + "(" + game.getRedPlayers().size() + ")");
-                    lore.add("Blue : " + game.getGameBluePoints() + "(" + game.getRedPlayers().size() + ")");
+                    lore.add("Red : " + game.redPoints + "(" + game.getRedPlayers().size() + ")");
+                    lore.add("Blue : " + game.bluePoints + "(" + game.getRedPlayers().size() + ")");
 
                     break;
                 case ENDING:

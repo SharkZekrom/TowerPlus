@@ -19,20 +19,20 @@ public class GameManager {
         return gameId;
     }
 
-    int gameBluePoints;
-    public int getGameBluePoints() {
-        return gameBluePoints;
+    int bluePoints;
+    public int getBluePoints() {
+        return bluePoints;
     }
-    public void setGameBluePoints(int gameBluePoints) {
-        this.gameBluePoints = gameBluePoints;
+    public void setBluePoints(int gameBluePoints) {
+        this.bluePoints = gameBluePoints;
     }
 
-    int gameRedPoints;
-    public int getGameRedPoints() {
-        return gameRedPoints;
+    int redPoints;
+    public int getRedPoints() {
+        return redPoints;
     }
-    public void setGameRedPoints(int gameRedPoints) {
-        this.gameRedPoints = gameRedPoints;
+    public void setRedPoints(int gameRedPoints) {
+        this.redPoints = gameRedPoints;
     }
 
     GameStatus gameStatus;
@@ -131,8 +131,8 @@ public class GameManager {
 
     public GameManager() {
         gameId = games.size() + 1;
-        gameBluePoints = 0;
-        gameRedPoints = 0;
+        bluePoints = 0;
+        redPoints = 0;
         gameStatus = GameStatus.WAITING;
         countdown = 30;
         players = new ArrayList<>();
@@ -185,13 +185,16 @@ public class GameManager {
                 break;
             case INGAME:
                 board.updateLines(
-                        "Red players: " + game.getRedPlayers().size(),
-                        "Blue players: " + game.getBluePlayers().size()
+                        "Red points: " + game.getRedPoints(),
+                        "Blue points: " + game.getBluePoints(),
+                        "players: " + game.getPlayers().size() + "/10"
+
                 );
                 break;
             case ENDING:
                 board.updateLines(
                         "",
+                        "Finish",
                         ""
                 );
                 break;
@@ -219,20 +222,20 @@ public class GameManager {
         if (gameManager.getRedPlayers().size() == gameManager.getBluePlayers().size()) {
             if (random.nextBoolean()) {
                 gameManager.addRedPlayer(player);
-                team = "&c&lred";
+                team = "red";
             } else {
                 gameManager.addBluePlayer(player);
-                team = "&b&lblue";
+                team = "blue";
             }
         } else {
             if (gameManager.getRedPlayers().size() < gameManager.getBluePlayers().size()) {
                 gameManager.addRedPlayer(player);
-                team = "&c&lred";
+                team = "red";
             } else {
                 gameManager.addBluePlayer(player);
-                team = "&b&lblue";
+                team = "blue";
             }
         }
-        player.sendMessage("§cYou have joined the " + team + " &ateam.");
+        player.sendMessage("§cYou have joined the " + team + " team.");
     }
 }
