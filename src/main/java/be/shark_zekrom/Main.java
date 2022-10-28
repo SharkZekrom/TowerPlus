@@ -60,6 +60,10 @@ public class Main extends JavaPlugin {
         config.options().copyDefaults(true);
         saveConfig();
 
+        GameManager.maxPlayers = 9;
+        GameManager.minPlayers = 1;
+        GameManager.countdown = 10;
+        GameManager.points = 1;
 
         for (int i = 0; i < 2; i++) {
             new GameManager();

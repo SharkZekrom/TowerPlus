@@ -14,6 +14,8 @@ public class GameManager {
     public static final Map<UUID, FastBoard> boards = new HashMap<>();
     public static ArrayList<GameManager> games = new ArrayList<>();
 
+    public static int maxPlayers, minPlayers, points, countdown;
+
     int gameId;
 
     public int getGameId() {
@@ -30,7 +32,7 @@ public class GameManager {
         bluePoints++;
         Bukkit.broadcastMessage("Blue team has scored a point! (" + bluePoints + ")");
         player.teleport(new Location(player.getWorld(), 0, -42, 0));
-        if (bluePoints == 1) {
+        if (bluePoints == points) {
             this.setGameStatus(GameStatus.ENDING);
             endGame(this, "blue");
         }
@@ -50,7 +52,7 @@ public class GameManager {
         redPoints++;
         Bukkit.broadcastMessage("Red team has scored a point! (" + redPoints + ")");
         player.teleport(new Location(player.getWorld(), 0, -42, 0));
-        if (redPoints == 1) {
+        if (redPoints == points) {
             this.setGameStatus(GameStatus.ENDING);
             endGame(this, "red");
         }
@@ -69,8 +71,6 @@ public class GameManager {
     public void setGameStatus(GameStatus gameStatus) {
         this.gameStatus = gameStatus;
     }
-
-    int countdown;
 
     public int getCountdown() {
         return countdown;
@@ -172,7 +172,6 @@ public class GameManager {
         bluePoints = 0;
         redPoints = 0;
         gameStatus = GameStatus.WAITING;
-        countdown = 30;
         players = new ArrayList<>();
         redPlayers = new ArrayList<>();
         bluePlayers = new ArrayList<>();
@@ -189,6 +188,10 @@ public class GameManager {
             }
         }
         return null;
+    }
+
+    public void deleteGame() {
+        games.remove(this);
     }
 
 
@@ -209,21 +212,22 @@ public class GameManager {
                 board.updateLines(
                         "Waiting for players",
                         "ID > TowerPlus-" + game.getGameId(),
-                        game.getPlayers().size() + "/10"
+                        "players: " + game.getPlayers().size() + "/" + maxPlayers
                 );
                 break;
             case STARTING:
                 board.updateLines(
                         "Starting in " + game.getCountdown(),
                         "ID > TowerPlus-" + game.getGameId(),
-                        game.getPlayers().size() + "/10"
+                        "players: " + game.getPlayers().size() + "/" + maxPlayers
                 );
                 break;
             case INGAME:
                 board.updateLines(
                         "Red points: " + game.getRedPoints(),
                         "Blue points: " + game.getBluePoints(),
-                        "players: " + game.getPlayers().size() + "/10"
+                        "players: " + game.getPlayers().size() + "/" + maxPlayers
+
 
                 );
                 break;
@@ -249,6 +253,7 @@ public class GameManager {
     }
 
     public static void returnInventory(Player player) {
+        player.getInventory().clear();
 
     }
 

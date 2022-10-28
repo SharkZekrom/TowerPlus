@@ -87,8 +87,8 @@ public class Gui implements Listener {
                     player.teleport(new Location(Bukkit.getWorld("TowerPlus_" + id), 0, -60,0));
                     GameManager.waitingInventory(player);
 
-                    if (game.getPlayers().size() >= 1) {
-                        game.setCountdown(10);
+                    if (game.getPlayers().size() >= GameManager.minPlayers) {
+                        game.setCountdown(GameManager.countdown);
                         game.setGameStatus(GameManager.GameStatus.STARTING);
 
                         new BukkitRunnable() {
@@ -99,7 +99,10 @@ public class Gui implements Listener {
                                         game.setGameStatus(GameManager.GameStatus.INGAME);
                                         game.setCountdown(0);
 
+
                                         for (Player players : game.getPlayers()) {
+                                            player.getInventory().clear();
+
                                             if (!game.getBluePlayers().contains(players) && !game.getRedPlayers().contains(players)) {
                                                 GameManager.randomTeam(game, players);
                                             }
