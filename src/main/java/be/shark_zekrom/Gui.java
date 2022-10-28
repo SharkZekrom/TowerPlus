@@ -22,7 +22,6 @@ public class Gui implements Listener {
         Inventory inventory = Bukkit.createInventory(null, 54, "All Games");
         player.openInventory(inventory);
         for (int i = 0; i < GameManager.games.size(); i++) {
-
             GameManager game = GameManager.getGameById(i + 1);
 
             ItemStack itemStack = null;

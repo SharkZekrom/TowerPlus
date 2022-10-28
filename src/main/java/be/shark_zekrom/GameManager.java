@@ -1,11 +1,11 @@
 package be.shark_zekrom;
 
 import fr.mrmicky.fastboard.FastBoard;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Statistic;
+import org.bukkit.*;
+import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
 
@@ -15,44 +15,74 @@ public class GameManager {
     public static ArrayList<GameManager> games = new ArrayList<>();
 
     int gameId;
+
     public int getGameId() {
         return gameId;
     }
 
     int bluePoints;
+
     public int getBluePoints() {
         return bluePoints;
     }
+
+    public void addBluePoints(Player player) {
+        bluePoints++;
+        Bukkit.broadcastMessage("Blue team has scored a point! (" + bluePoints + ")");
+        player.teleport(new Location(player.getWorld(), 0, -42, 0));
+        if (bluePoints == 1) {
+            this.setGameStatus(GameStatus.ENDING);
+            endGame(this, "blue");
+        }
+    }
+
     public void setBluePoints(int gameBluePoints) {
         this.bluePoints = gameBluePoints;
     }
 
     int redPoints;
+
     public int getRedPoints() {
         return redPoints;
     }
+
+    public void addRedPoints(Player player) {
+        redPoints++;
+        Bukkit.broadcastMessage("Red team has scored a point! (" + redPoints + ")");
+        player.teleport(new Location(player.getWorld(), 0, -42, 0));
+        if (redPoints == 1) {
+            this.setGameStatus(GameStatus.ENDING);
+            endGame(this, "red");
+        }
+    }
+
     public void setRedPoints(int gameRedPoints) {
         this.redPoints = gameRedPoints;
     }
 
     GameStatus gameStatus;
+
     public GameStatus getGameStatus() {
         return gameStatus;
     }
+
     public void setGameStatus(GameStatus gameStatus) {
         this.gameStatus = gameStatus;
     }
 
     int countdown;
+
     public int getCountdown() {
         return countdown;
     }
+
     public void setCountdown(int countdown) {
         this.countdown = countdown;
     }
 
 
     ArrayList<Player> players;
+
     public ArrayList<Player> getPlayers() {
         return players;
     }
@@ -60,6 +90,7 @@ public class GameManager {
     public void addPlayer(Player player) {
         this.players.add(player);
     }
+
     public void removePlayer(Player player) {
         this.players.remove(player);
 
@@ -71,6 +102,7 @@ public class GameManager {
             board.delete();
         }
     }
+
     public static boolean hasPlayer(Player player) {
         boolean hasPlayer = false;
         for (GameManager gameManager : games) {
@@ -84,23 +116,29 @@ public class GameManager {
 
 
     ArrayList<Player> redPlayers;
+
     public ArrayList<Player> getRedPlayers() {
         return redPlayers;
     }
+
     public void addRedPlayer(Player player) {
         redPlayers.add(player);
     }
+
     public void removeRedPlayer(Player player) {
         redPlayers.remove(player);
     }
 
     ArrayList<Player> bluePlayers;
+
     public ArrayList<Player> getBluePlayers() {
         return bluePlayers;
     }
+
     public void addBluePlayer(Player player) {
         bluePlayers.add(player);
     }
+
     public void removebluePlayer(Player player) {
         bluePlayers.remove(player);
     }
@@ -139,7 +177,7 @@ public class GameManager {
         redPlayers = new ArrayList<>();
         bluePlayers = new ArrayList<>();
         WorldManager.cloneWorld();
-        GameManager.games.add(this);
+        games.add(this);
 
     }
 
@@ -152,8 +190,6 @@ public class GameManager {
         }
         return null;
     }
-
-
 
 
     public enum GameStatus {
@@ -215,6 +251,7 @@ public class GameManager {
     public static void returnInventory(Player player) {
 
     }
+
     public static void randomTeam(GameManager gameManager, Player player) {
         Random random = new Random();
 
@@ -237,5 +274,22 @@ public class GameManager {
             }
         }
         player.sendMessage("§cYou have joined the " + team + " team.");
+    }
+
+
+    public static void endGame(GameManager gameManager, String team) {
+
+        for (Player players : gameManager.getPlayers()) {
+            players.sendMessage("§cThe " + team + " team has won the game!");
+            players.setGameMode(GameMode.SPECTATOR);
+            gameManager.removePlayer(players);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    players.teleport(new Location(Bukkit.getWorld("world"), 0, -60, 0));
+                }
+            }.runTaskLater(Main.getPlugin(Main.class), 20 * 5);
+        }
+        games.remove(gameManager);
     }
 }
