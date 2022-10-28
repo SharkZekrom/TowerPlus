@@ -21,8 +21,9 @@ public class Gui implements Listener {
     public static void allGames(Player player) {
         Inventory inventory = Bukkit.createInventory(null, 54, "All Games");
         player.openInventory(inventory);
-        for (int i = 0; i < GameManager.games.size(); i++) {
-            GameManager game = GameManager.getGameById(i + 1);
+
+        int[] slot = {0};
+        GameManager.games.forEach(game -> {
 
             ItemStack itemStack = null;
             ArrayList<String> lore = new ArrayList<>();
@@ -52,12 +53,12 @@ public class Gui implements Listener {
             }
             ItemMeta itemMeta = itemStack.getItemMeta();
             itemMeta.setLore(lore);
-            itemMeta.setDisplayName("Game " + (i + 1));
+            itemMeta.setDisplayName("Game " + game.getGameId());
             itemStack.setItemMeta(itemMeta);
 
-            inventory.setItem(i, itemStack);
+            inventory.setItem(slot[0]++, itemStack);
+        });
 
-        }
     }
 
     @EventHandler

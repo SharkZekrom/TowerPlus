@@ -18,6 +18,8 @@ public class Main extends JavaPlugin {
 
     public static MultiverseCore core;
 
+    public static int id = 0;
+
     @Override
     public void onEnable() {
         instance = this;

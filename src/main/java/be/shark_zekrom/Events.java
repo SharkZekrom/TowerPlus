@@ -55,17 +55,14 @@ public class Events implements Listener {
             if (gameManager.getGameStatus() == GameManager.GameStatus.INGAME) {
                 if (gameManager.getRedPlayers().contains(event.getPlayer())) {
                     if (inRegion(event.getPlayer().getLocation(), new Location(event.getPlayer().getWorld(), -1, -43,-9), new Location(event.getPlayer().getWorld(), 1, -44,-11))) {
-                        if (gameManager.getGameStatus() == GameManager.GameStatus.INGAME) {
-                            gameManager.addRedPoints(event.getPlayer());
-                        }
+                        gameManager.addRedPoints(event.getPlayer());
+
 
                     }
                 }
                 else if (gameManager.getBluePlayers().contains(event.getPlayer())) {
                     if (inRegion(event.getPlayer().getLocation(), new Location(event.getPlayer().getWorld(), 1, -43,11), new Location(event.getPlayer().getWorld(), -1, -44,9))) {
-                        if (gameManager.getGameStatus() == GameManager.GameStatus.INGAME) {
                             gameManager.addBluePoints(event.getPlayer());
-                        }
                     }
                 }
 

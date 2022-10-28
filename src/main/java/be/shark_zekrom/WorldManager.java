@@ -9,7 +9,7 @@ public class WorldManager {
 
         MVWorldManager worldManager = Main.core.getMVWorldManager();
 
-        worldManager.cloneWorld("creative", "TowerPlus_" + (GameManager.games.size() + 1));
+        worldManager.cloneWorld("creative", "TowerPlus_" + Main.id);
 
     }
 

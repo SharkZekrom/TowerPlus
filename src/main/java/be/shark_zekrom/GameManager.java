@@ -94,8 +94,8 @@ public class GameManager {
     public void removePlayer(Player player) {
         this.players.remove(player);
 
-        getRedPlayers().remove(player);
-        getBluePlayers().remove(player);
+        this.getRedPlayers().remove(player);
+        this.getBluePlayers().remove(player);
 
         FastBoard board = boards.remove(player.getUniqueId());
         if (board != null) {
@@ -168,7 +168,7 @@ public class GameManager {
 
 
     public GameManager() {
-        gameId = games.size() + 1;
+        gameId = ++Main.id;
         bluePoints = 0;
         redPoints = 0;
         gameStatus = GameStatus.WAITING;
@@ -208,14 +208,14 @@ public class GameManager {
             case WAITING:
                 board.updateLines(
                         "Waiting for players",
-                        "ID > " + game.getGameId(),
+                        "ID > TowerPlus-" + game.getGameId(),
                         game.getPlayers().size() + "/10"
                 );
                 break;
             case STARTING:
                 board.updateLines(
                         "Starting in " + game.getCountdown(),
-                        "ID > " + game.getGameId(),
+                        "ID > TowerPlus-" + game.getGameId(),
                         game.getPlayers().size() + "/10"
                 );
                 break;
@@ -282,7 +282,11 @@ public class GameManager {
         for (Player players : gameManager.getPlayers()) {
             players.sendMessage("§cThe " + team + " team has won the game!");
             players.setGameMode(GameMode.SPECTATOR);
-            gameManager.removePlayer(players);
+
+            FastBoard board = boards.remove(players.getUniqueId());
+            if (board != null) {
+                board.delete();
+            }
             new BukkitRunnable() {
                 @Override
                 public void run() {
@@ -291,5 +295,7 @@ public class GameManager {
             }.runTaskLater(Main.getPlugin(Main.class), 20 * 5);
         }
         games.remove(gameManager);
+
+        new GameManager();
     }
 }
