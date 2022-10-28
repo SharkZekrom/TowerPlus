@@ -1,12 +1,20 @@
 package be.shark_zekrom;
 
+import fr.mrmicky.fastboard.FastBoard;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class GameManager {
 
+    public static final Map<UUID, FastBoard> boards = new HashMap<>();
     public static ArrayList<GameManager> games = new ArrayList<>();
     int gameId;
     public int getGameId() {
@@ -45,12 +53,17 @@ public class GameManager {
         this.countdown = countdown;
     }
 
-    int players;
-    public int getPlayers() {
+
+    ArrayList<Player> players = new ArrayList<>();
+    public ArrayList<Player> getPlayers() {
         return players;
     }
-    public void setPlayers(int players) {
-        this.players = players;
+
+    public void addPlayer(Player player) {
+        this.players.add(player);
+    }
+    public void removePlayer(Player player) {
+        this.players.remove(player);
     }
 
     ArrayList<Player> redPlayers;
@@ -75,6 +88,19 @@ public class GameManager {
         bluePlayers.remove(player);
     }
 
+    public static int getGameIdByPlayer(Player player) {
+        int id = 0;
+        for (int i = 0; i < games.size(); i++) {
+            GameManager game = GameManager.getGameById(i + 1);
+            if (game.getPlayers().contains(player)) {
+                id = i + 1;
+            }
+        }
+
+        return id;
+
+    }
+
 
     public GameManager() {
         gameId = games.size() + 1;
@@ -82,7 +108,7 @@ public class GameManager {
         gameRedPoints = 0;
         gameStatus = GameStatus.WAITING;
         countdown = 30;
-        players = 0;
+        players = new ArrayList<>();
         redPlayers = new ArrayList<>();
         bluePlayers = new ArrayList<>();
         WorldManager.cloneWorld();
@@ -109,5 +135,39 @@ public class GameManager {
         INGAME,
         ENDING
 
+    }
+
+
+    public static void updateBoard(FastBoard board) {
+        GameManager game = getGameById(getGameIdByPlayer(board.getPlayer()));
+
+        switch (game.getGameStatus()) {
+            case WAITING:
+                board.
+                board.updateLines(
+                        "Waiting for players",
+                        "",
+                        game.getPlayers().size() + "/10"
+                );
+                break;
+            case STARTING:
+                board.updateLines(
+                        "",
+                        ""
+                );
+                break;
+            case INGAME:
+                board.updateLines(
+                        "",
+                        ""
+                );
+                break;
+            case ENDING:
+                board.updateLines(
+                        "",
+                        ""
+                );
+                break;
+        }
     }
 }

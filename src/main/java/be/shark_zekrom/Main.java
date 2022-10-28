@@ -1,6 +1,7 @@
 package be.shark_zekrom;
 
 import com.onarandombox.MultiverseCore.MultiverseCore;
+import fr.mrmicky.fastboard.FastBoard;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
@@ -33,6 +34,11 @@ public class Main extends JavaPlugin {
 
         pm.registerEvents(new Gui(), this);
 
+        getServer().getScheduler().runTaskTimer(this, () -> {
+            for (FastBoard board : GameManager.boards.values()) {
+                GameManager.updateBoard(board);
+            }
+        }, 0, 20);
 
 
         FileConfiguration config = getConfig();

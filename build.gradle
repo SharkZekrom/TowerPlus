@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+
 }
 
 group 'be.shark_zekrom'
@@ -22,7 +24,11 @@ repositories {
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.13-R0.1-SNAPSHOT'
     compileOnly 'com.onarandombox.multiversecore:Multiverse-Core:4.3.1'
+    implementation 'fr.mrmicky:fastboard:1.2.1'
 
 }
 
+shadowJar {
+    relocate 'fr.mrmicky.fastboard', 'be.shark_zekrom.fastboard'
+}
 compileJava.options.encoding = 'UTF-8'

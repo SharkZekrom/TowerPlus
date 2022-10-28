@@ -24,7 +24,7 @@ public class Commands implements CommandExecutor {
             WorldManager.deleteWorld(Integer.parseInt(args[1]));
         }
         if (args[0].equals("status")) {
-            Bukkit.broadcastMessage(GameManager.games.size() + "");
+            GameManager.getGameById(Integer.parseInt(args[1])).setGameStatus(GameManager.GameStatus.valueOf(args[2]));
         }
         if (args[0].equals("inventory")) {
             Gui.allGames(player);

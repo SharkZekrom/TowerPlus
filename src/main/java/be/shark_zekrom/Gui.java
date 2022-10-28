@@ -3,6 +3,7 @@ package be.shark_zekrom;
 import com.onarandombox.MultiverseCore.MVWorld;
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
 import com.onarandombox.MultiverseCore.api.MultiverseWorld;
+import fr.mrmicky.fastboard.FastBoard;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -74,6 +75,13 @@ public class Gui implements Listener {
             if (event.getInventory().getItem(slot) != null) {
                 if (event.getInventory().getItem(slot).getType() == Material.GREEN_WOOL) {
                     String id = event.getInventory().getItem(slot).getItemMeta().getDisplayName().replaceAll("[ a-zA-Z]", "");
+
+                    GameManager.getGameById(Integer.parseInt(id)).addPlayer(player);
+
+
+                    FastBoard board = new FastBoard(player);
+                    GameManager.boards.put(player.getUniqueId(), board);
+
                     player.teleport(new Location(Bukkit.getWorld("TowerPlus_" + id), 0, -60,0));
 
 
