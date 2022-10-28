@@ -49,25 +49,18 @@ public class Events implements Listener {
 
     @EventHandler
     private void onMove(PlayerMoveEvent event) {
-        Boolean inRegion = inRegion(event.getPlayer().getLocation(), new Location(Bukkit.getWorld("World"), 0, -60,0), new Location(Bukkit.getWorld("World"), 0, -50,0));
-        if (inRegion) {
-            Bukkit.broadcastMessage("true");
-        }
 
         GameManager gameManager = GameManager.getGameByPlayer(event.getPlayer());
         if (gameManager != null) {
-            Bukkit.broadcastMessage("test1");
             if (gameManager.getGameStatus() == GameManager.GameStatus.INGAME) {
-                Bukkit.broadcastMessage("test2");
                 if (gameManager.getRedPlayers().contains(event.getPlayer())) {
-                    Bukkit.broadcastMessage("test3");
-                    if (inRegion(event.getPlayer().getLocation(), new Location(Bukkit.getWorld("World"), 0.7, -44,-8.7), new Location(Bukkit.getWorld("World"), 0.3, -43,-8.3))) {
+                    if (inRegion(event.getPlayer().getLocation(), new Location(event.getPlayer().getWorld(), -1, -43,-9), new Location(event.getPlayer().getWorld(), 1, -44,-11))) {
                         Bukkit.broadcastMessage("red");
 
                     }
-                } else if (gameManager.getBluePlayers().contains(event.getPlayer())) {
-                    Bukkit.broadcastMessage("test4");
-                    if (inRegion(event.getPlayer().getLocation(), new Location(Bukkit.getWorld("World"), 0.3, -44,9.7), new Location(Bukkit.getWorld("World"), 0.7, -43,9.3))) {
+                }
+                if (gameManager.getBluePlayers().contains(event.getPlayer())) {
+                    if (inRegion(event.getPlayer().getLocation(), new Location(event.getPlayer().getWorld(), 1, -43,11), new Location(event.getPlayer().getWorld(), -1, -44,9))) {
                         Bukkit.broadcastMessage("blue");
 
                     }

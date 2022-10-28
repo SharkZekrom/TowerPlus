@@ -88,10 +88,10 @@ public class GameManager {
         return redPlayers;
     }
     public void addRedPlayer(Player player) {
-        bluePlayers.add(player);
+        redPlayers.add(player);
     }
     public void removeRedPlayer(Player player) {
-        bluePlayers.remove(player);
+        redPlayers.remove(player);
     }
 
     ArrayList<Player> bluePlayers;

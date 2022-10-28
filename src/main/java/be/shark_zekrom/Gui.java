@@ -104,6 +104,7 @@ public class Gui implements Listener {
                                                 GameManager.randomTeam(game, players);
                                             }
                                         }
+
                                         cancel();
                                     }
                                     game.setCountdown(game.getCountdown() - 1);
