@@ -74,56 +74,57 @@ public class Gui implements Listener {
 
                     GameManager game = GameManager.getGameById(Integer.parseInt(id));
 
-                    for (Player players : game.getPlayers()) {
-                        players.sendMessage("§a" + player.getName() + " §7has joined the game " + game.getPlayers().size() + "/10");
-                    }
+                    if (game.getPlayers().size() < Main.maxPlayers) {
+                        for (Player players : game.getPlayers()) {
+                            players.sendMessage("§a" + player.getName() + " §7has joined the game " + game.getPlayers().size() + "/10");
+                        }
 
-                    game.addPlayer(player);
-                    FastBoard board = new FastBoard(player);
-                    board.updateTitle("Tower+");
+                        game.addPlayer(player);
+                        FastBoard board = new FastBoard(player);
+                        board.updateTitle("Tower+");
 
-                    GameManager.boards.put(player.getUniqueId(), board);
+                        GameManager.boards.put(player.getUniqueId(), board);
 
-                    player.teleport(new Location(Bukkit.getWorld("TowerPlus_" + id), 0, -60,0));
-                    GameManager.waitingInventory(player);
+                        player.teleport(new Location(Bukkit.getWorld("TowerPlus_" + id), 0, -60, 0));
+                        GameManager.waitingInventory(player);
 
-                    if (game.getPlayers().size() >= Main.minPlayers) {
-                        game.setCountdown(game.getCountdown());
-                        game.setGameStatus(GameManager.GameStatus.STARTING);
+                        if (game.getPlayers().size() >= Main.minPlayers) {
+                            game.setCountdown(game.getCountdown());
+                            game.setGameStatus(GameManager.GameStatus.STARTING);
 
-                        new BukkitRunnable() {
-                            @Override
-                            public void run() {
-                                if (game.getPlayers().size() >= 1) {
-                                    if (game.getCountdown() == 0) {
-                                        game.setGameStatus(GameManager.GameStatus.INGAME);
-                                        game.setCountdown(Main.countdown);
+                            new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    if (game.getPlayers().size() >= 1) {
+                                        if (game.getCountdown() == 0) {
+                                            game.setGameStatus(GameManager.GameStatus.INGAME);
+                                            game.setCountdown(Main.countdown);
 
 
-                                        for (Player players : game.getPlayers()) {
-                                            player.getInventory().clear();
+                                            for (Player players : game.getPlayers()) {
+                                                player.getInventory().clear();
 
-                                            if (!game.getBluePlayers().contains(players) && !game.getRedPlayers().contains(players)) {
-                                                GameManager.randomTeam(game, players);
+                                                if (!game.getBluePlayers().contains(players) && !game.getRedPlayers().contains(players)) {
+                                                    GameManager.randomTeam(game, players);
+                                                }
                                             }
-                                        }
 
+                                            cancel();
+                                        }
+                                        game.setCountdown(game.getCountdown() - 1);
+                                    } else {
+                                        game.setGameStatus(GameManager.GameStatus.WAITING);
+                                        for (Player players : game.getPlayers()) {
+                                            players.sendMessage("§acancelled");
+                                        }
                                         cancel();
                                     }
-                                    game.setCountdown(game.getCountdown() - 1);
-                                } else {
-                                    game.setGameStatus(GameManager.GameStatus.WAITING);
-                                    for (Player players : game.getPlayers()) {
-                                        players.sendMessage("§acancelled");
-                                    }
-                                    cancel();
                                 }
-                            }
-                        }.runTaskTimer(Main.getInstance(), 0, 20);
+                            }.runTaskTimer(Main.getInstance(), 0, 20);
+                        }
+                    } else {
+                        player.sendMessage("§cThis game is full");
                     }
-
-
-
                 }
             }
         }

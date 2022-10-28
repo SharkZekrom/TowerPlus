@@ -3,9 +3,12 @@ package be.shark_zekrom;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import fr.mrmicky.fastboard.FastBoard;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Arrays;
 
 public class Main extends JavaPlugin {
 
@@ -18,8 +21,9 @@ public class Main extends JavaPlugin {
 
     public static MultiverseCore core;
 
-    public static int id, maxPlayers, minPlayers, points, countdown;
-
+    public static Integer id, maxPlayers, minPlayers, points, countdown;
+    public static String worldToClone, lobby;
+    public static int[] waitingSpawn, spawnRed, spawnBlue;
 
     @Override
     public void onEnable() {
@@ -54,17 +58,25 @@ public class Main extends JavaPlugin {
         config.addDefault("waitingSpawn", new int[]{0, 0, 0, 0, 0});
 
         config.addDefault("pointsToWin", 10);
-        config.addDefault("maxPlayerPerTeam", 10);
-        config.addDefault("minPlayersToStart", 2);
+        config.addDefault("maxPlayer", 10);
+        config.addDefault("minPlayers", 2);
+        config.addDefault("countdown", 30);
 
 
         config.options().copyDefaults(true);
         saveConfig();
 
-        maxPlayers = 9;
-        minPlayers = 1;
-        countdown = 10;
-        points = 1;
+        maxPlayers = config.getInt("maxPlayer");
+        minPlayers = config.getInt("minPlayers");
+        countdown = config.getInt("countdown");
+        points = config.getInt("pointsToWin");
+
+        worldToClone = config.getString("worldToClone");
+        lobby = config.getString("lobby");
+
+        waitingSpawn = config.getList("waitingSpawn").stream().mapToInt(i -> (int) i).toArray();
+        spawnBlue = config.getList("spawn.blue").stream().mapToInt(i -> (int) i).toArray();
+        spawnRed = config.getList("spawn.red").stream().mapToInt(i -> (int) i).toArray();
 
         for (int i = 0; i < 2; i++) {
             new GameManager();
