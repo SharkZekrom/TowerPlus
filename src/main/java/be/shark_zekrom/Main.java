@@ -59,7 +59,10 @@ public class Main extends JavaPlugin {
         saveConfig();
 
 
-        new GameManager();
+        for (int i = 0; i < 2; i++) {
+            new GameManager();
+        }
+
 
     }
 

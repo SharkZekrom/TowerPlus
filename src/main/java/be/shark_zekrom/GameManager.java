@@ -7,10 +7,7 @@ import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class GameManager {
 
@@ -175,20 +172,21 @@ public class GameManager {
             case WAITING:
                 board.updateLines(
                         "Waiting for players",
-                        "",
+                        "ID > " + game.getGameId(),
                         game.getPlayers().size() + "/10"
                 );
                 break;
             case STARTING:
                 board.updateLines(
-                        "",
-                        ""
+                        "Starting in " + game.getCountdown(),
+                        "ID > " + game.getGameId(),
+                        game.getPlayers().size() + "/10"
                 );
                 break;
             case INGAME:
                 board.updateLines(
-                        "",
-                        ""
+                        "Red players: " + game.getRedPlayers().size(),
+                        "Blue players: " + game.getBluePlayers().size()
                 );
                 break;
             case ENDING:
@@ -203,12 +201,38 @@ public class GameManager {
 
     public static void waitingInventory(Player player) {
         player.getInventory().clear();
+        player.getInventory().setItem(3, new ItemStack(Material.BLUE_BANNER));
+        player.getInventory().setItem(4, new ItemStack(Material.STONE));
+        player.getInventory().setItem(5, new ItemStack(Material.RED_BANNER));
+
         player.getInventory().setItem(8, new ItemStack(Material.BARRIER));
+
     }
 
     public static void returnInventory(Player player) {
 
     }
+    public static void randomTeam(GameManager gameManager, Player player) {
+        Random random = new Random();
 
-
+        String team;
+        if (gameManager.getRedPlayers().size() == gameManager.getBluePlayers().size()) {
+            if (random.nextBoolean()) {
+                gameManager.addRedPlayer(player);
+                team = "&c&lred";
+            } else {
+                gameManager.addBluePlayer(player);
+                team = "&b&lblue";
+            }
+        } else {
+            if (gameManager.getRedPlayers().size() < gameManager.getBluePlayers().size()) {
+                gameManager.addRedPlayer(player);
+                team = "&c&lred";
+            } else {
+                gameManager.addBluePlayer(player);
+                team = "&b&lblue";
+            }
+        }
+        player.sendMessage("§cYou have joined the " + team + " &ateam.");
+    }
 }
