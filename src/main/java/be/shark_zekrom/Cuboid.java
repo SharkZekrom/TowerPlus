@@ -67,15 +67,4 @@ public class Cuboid {
                 y >= minY && y <= maxY &&
                 z >= minZ && z <= maxZ;
     }
-
-    @Override
-    public String toString() {
-        return "Cuboid[world:" + world.getName() +
-                ", minX:" + minX +
-                ", minY:" + minY +
-                ", minZ:" + minZ +
-                ", maxX:" + maxX +
-                ", maxY:" + maxY +
-                ", maxZ:" + maxZ + "]";
-    }
 }
