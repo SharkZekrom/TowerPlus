@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -19,21 +20,29 @@ public class Events implements Listener {
     @EventHandler
     private void onRightClick(PlayerInteractEvent event) {
 
-        if (event.getItem().getType() == Material.BARRIER && GameManager.hasPlayer(event.getPlayer())) {
-            Player player = event.getPlayer();
-            GameManager gameManager = GameManager.getGameByPlayer(player);
-            gameManager.removePlayer(player);
+        if (event.getItem() != null) {
+            if (event.getItem().getType() == Material.BARRIER && GameManager.hasPlayer(event.getPlayer())) {
+                Player player = event.getPlayer();
+                GameManager gameManager = GameManager.getGameByPlayer(player);
+                gameManager.removePlayer(player);
 
-            player.teleport(new Location(Bukkit.getWorld("World"), 0, -60,0));
-            GameManager.returnInventory(player);
+                player.teleport(new Location(Bukkit.getWorld("World"), 0, -60, 0));
+                GameManager.returnInventory(player);
 
-            for (Player players : gameManager.getPlayers()) {
-                players.sendMessage("§a" + player.getName() + " §7leave the game" + gameManager.getPlayers().size() + "/10");
+                for (Player players : gameManager.getPlayers()) {
+                    players.sendMessage("§a" + player.getName() + " §7leave the game" + gameManager.getPlayers().size() + "/10");
 
+                }
             }
         }
 
     }
+
+    @EventHandler
+    private void onJoin(PlayerJoinEvent event) {
+        event.getPlayer().teleport(Main.lobby);
+    }
+
     @EventHandler
     private void onQuit(PlayerQuitEvent event) {
         if (GameManager.hasPlayer(event.getPlayer())) {
@@ -65,14 +74,15 @@ public class Events implements Listener {
         if (gameManager != null) {
             if (gameManager.getGameStatus() == GameManager.GameStatus.INGAME) {
                 if (gameManager.getRedPlayers().contains(event.getPlayer())) {
-                    if (inRegion(event.getPlayer().getLocation(), new Location(event.getPlayer().getWorld(), 1, -43, 11), new Location(event.getPlayer().getWorld(), -1, -44, 9))) {
+
+                    Cuboid cuboid = new Cuboid(new Location(event.getPlayer().getWorld(), 1.7, -44, 9.3), new Location(event.getPlayer().getWorld(), -0.7, -44, 11.7));
+                    if (cuboid.contains(event.getPlayer().getLocation())) {
                         gameManager.addRedPoints(event.getPlayer());
-
-
                     }
-                } else if (gameManager.getBluePlayers().contains(event.getPlayer())) {
-                    if (inRegion(event.getPlayer().getLocation(), new Location(event.getPlayer().getWorld(), -1, -43, -9), new Location(event.getPlayer().getWorld(), 1, -44, -11))) {
 
+                } else if (gameManager.getBluePlayers().contains(event.getPlayer())) {
+                    Cuboid cuboid = new Cuboid(new Location(event.getPlayer().getWorld(), 1.7, -44, -8.3), new Location(event.getPlayer().getWorld(), -0.7, -44, -10.7));
+                    if (cuboid.contains(event.getPlayer().getLocation())) {
                         gameManager.addBluePoints(event.getPlayer());
                     }
                 }
@@ -81,12 +91,4 @@ public class Events implements Listener {
             }
         }
     }
-
-
-    public boolean inRegion(Location playerLoc, Location loc1, Location loc2){
-        return new IntRange(loc1.getX(), loc2.getX()).containsDouble(playerLoc.getX())
-                && new IntRange(loc1.getY(), loc2.getY()).containsDouble(playerLoc.getY())
-                &&  new IntRange(loc1.getZ(), loc2.getZ()).containsDouble(playerLoc.getZ());
-    }
-
 }

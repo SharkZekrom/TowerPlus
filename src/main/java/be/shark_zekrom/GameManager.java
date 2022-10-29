@@ -335,11 +335,14 @@ public class GameManager {
                 );
                 break;
             case INGAME:
+
+
+
                 board.updateLines(
                         "Red points: " + game.getRedPoints(),
                         "Blue points: " + game.getBluePoints(),
-                        "players: " + game.getPlayers().size() + "/" + game.getMaxPlayers()
-
+                        "players: " + game.getPlayers().size() + "/" + game.getMaxPlayers(),
+                        "time: " + Utils.getIntervalTime(game.getTime())
 
                 );
                 break;

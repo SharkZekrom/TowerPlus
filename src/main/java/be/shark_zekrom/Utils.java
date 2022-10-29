@@ -6,7 +6,7 @@ public class Utils {
 
     public static String getIntervalTime(long longInterval) {
 
-        long cloneLongInterval = longInterval;
+        long cloneLongInterval = System.currentTimeMillis() - longInterval;
 
         long hours = TimeUnit.MILLISECONDS.toHours(cloneLongInterval);
         cloneLongInterval -= TimeUnit.HOURS.toMillis(hours);
