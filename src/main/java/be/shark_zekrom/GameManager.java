@@ -206,6 +206,9 @@ public class GameManager {
     public long getTime() {
         return time;
     }
+    public void setTime(long time) {
+        this.time = time;
+    }
 
 
 
@@ -218,7 +221,6 @@ public class GameManager {
         players = new ArrayList<>();
         redPlayers = new ArrayList<>();
         bluePlayers = new ArrayList<>();
-        time = System.currentTimeMillis();
 
         setMaxPoints(maxPoints);
         setMinPlayers(minPlayers);
@@ -251,7 +253,7 @@ public class GameManager {
 
                                     if (gameManager.getCountdown() == 0) {
                                         gameManager.setGameStatus(GameManager.GameStatus.INGAME);
-                                        gameManager.setCountdown(Main.countdown);
+                                        gameManager.setTime(System.currentTimeMillis());
 
 
                                         for (Player players : gameManager.getPlayers()) {
@@ -268,6 +270,7 @@ public class GameManager {
                                             }
 
                                         }
+
                                         if (GameManager.games.size() - 1 < Main.gamesAtTheSameTime) {
                                             new GameManager(Main.maxPlayers, Main.minPlayers, Main.points, Main.countdown);
                                         }
