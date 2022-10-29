@@ -28,7 +28,11 @@ public class Commands implements CommandExecutor {
             GameManager.getGameById(Integer.parseInt(args[1])).setGameStatus(GameManager.GameStatus.valueOf(args[2]));
         }
         if (args[0].equals("inventory")) {
-            Gui.allGames(player);
+            if (GameManager.hasPlayer(player)) {
+                player.sendMessage("§cYou are already in a game");
+            } else {
+                Gui.allGames(player);
+            }
         }
         return true;
     }

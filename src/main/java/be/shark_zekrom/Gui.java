@@ -84,8 +84,7 @@ public class Gui implements Listener {
                         board.updateTitle("Tower+");
 
                         GameManager.boards.put(player.getUniqueId(), board);
-
-                        player.teleport(new Location(Bukkit.getWorld("TowerPlus_" + id), 0, -60, 0));
+                        player.teleport(game.getWaitingSpawn());
                         GameManager.waitingInventory(player);
 
                         if (game.getPlayers().size() >= Main.minPlayers) {
@@ -107,6 +106,15 @@ public class Gui implements Listener {
                                                 if (!game.getBluePlayers().contains(players) && !game.getRedPlayers().contains(players)) {
                                                     GameManager.randomTeam(game, players);
                                                 }
+                                                if (game.getBluePlayers().contains(players)) {
+                                                    players.teleport(game.getBlueSpawn());
+                                                    Bukkit.broadcastMessage(game.getBlueSpawn() + "");
+                                                } else if (game.getRedPlayers().contains(players)) {
+                                                    players.teleport(game.getRedSpawn());
+                                                    Bukkit.broadcastMessage(game.getRedSpawn() + "");
+
+                                                }
+
                                             }
 
                                             cancel();

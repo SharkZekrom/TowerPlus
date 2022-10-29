@@ -21,9 +21,9 @@ public class Main extends JavaPlugin {
 
     public static MultiverseCore core;
 
-    public static Integer id, maxPlayers, minPlayers, points, countdown;
-    public static String worldToClone, lobby;
-    public static int[] waitingSpawn, spawnRed, spawnBlue;
+    public static Integer id = 1, maxPlayers, minPlayers, points, countdown;
+    public static String worldToClone;
+    public static Location lobby;
 
     @Override
     public void onEnable() {
@@ -50,12 +50,32 @@ public class Main extends JavaPlugin {
 
 
         FileConfiguration config = getConfig();
-        config.addDefault("lobby", "world");
         config.addDefault("worldToClone", "tower");
 
-        config.addDefault("spawn.red", new int[]{0, 0, 0, 0, 0});
-        config.addDefault("spawn.blue", new int[]{0, 0, 0, 0, 0});
-        config.addDefault("waitingSpawn", new int[]{0, 0, 0, 0, 0});
+        config.addDefault("location.spawn.red.x", 0);
+        config.addDefault("location.spawn.red.y", 0);
+        config.addDefault("location.spawn.red.z", 0);
+        config.addDefault("location.spawn.red.yaw", 0);
+        config.addDefault("location.spawn.red.pitch", 0);
+
+        config.addDefault("location.spawn.blue.x", 0);
+        config.addDefault("location.spawn.blue.y", 0);
+        config.addDefault("location.spawn.blue.z", 0);
+        config.addDefault("location.spawn.blue.yaw", 0);
+        config.addDefault("location.spawn.blue.pitch", 0);
+
+        config.addDefault("location.waiting-spawn.x", 0);
+        config.addDefault("location.waiting-spawn.y", 0);
+        config.addDefault("location.waiting-spawn.z", 0);
+        config.addDefault("location.waiting-spawn.yaw", 0);
+        config.addDefault("location.waiting-spawn.pitch", 0);
+
+        config.addDefault("location.lobby.world", "world");
+        config.addDefault("location.lobby.x", 0);
+        config.addDefault("location.lobby.y", 0);
+        config.addDefault("location.lobby.z", 0);
+        config.addDefault("location.lobby.yaw", 0);
+        config.addDefault("location.lobby.pitch", 0);
 
         config.addDefault("pointsToWin", 10);
         config.addDefault("maxPlayer", 10);
@@ -66,17 +86,15 @@ public class Main extends JavaPlugin {
         config.options().copyDefaults(true);
         saveConfig();
 
+
         maxPlayers = config.getInt("maxPlayer");
         minPlayers = config.getInt("minPlayers");
         countdown = config.getInt("countdown");
         points = config.getInt("pointsToWin");
 
         worldToClone = config.getString("worldToClone");
-        lobby = config.getString("lobby");
 
-        waitingSpawn = config.getList("waitingSpawn").stream().mapToInt(i -> (int) i).toArray();
-        spawnBlue = config.getList("spawn.blue").stream().mapToInt(i -> (int) i).toArray();
-        spawnRed = config.getList("spawn.red").stream().mapToInt(i -> (int) i).toArray();
+        lobby = new Location(Bukkit.getWorld(config.getString("location.lobby.world")), config.getDouble("location.lobby.x"),config.getDouble("location.lobby.y"),config.getDouble("location.lobby.z"), (float) config.getDouble("location.lobby.yaw"), (float) config.getDouble("location.lobby.pitch"));
 
         for (int i = 0; i < 2; i++) {
             new GameManager();

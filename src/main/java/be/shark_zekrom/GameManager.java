@@ -14,6 +14,8 @@ public class GameManager {
     public static final Map<UUID, FastBoard> boards = new HashMap<>();
     public static ArrayList<GameManager> games = new ArrayList<>();
 
+    public static Location waitingSpawn, redSpawn, blueSpawn;
+
     int gameId;
 
     public int getGameId() {
@@ -163,9 +165,21 @@ public class GameManager {
         return game;
     }
 
+    public Location getWaitingSpawn() {
+        return waitingSpawn;
+    }
+
+    public Location getRedSpawn() {
+        return redSpawn;
+    }
+
+    public Location getBlueSpawn() {
+        return blueSpawn;
+    }
+
 
     public GameManager() {
-        gameId = ++Main.id;
+        gameId = Main.id;
         bluePoints = 0;
         redPoints = 0;
         countdown = Main.countdown;
@@ -173,8 +187,19 @@ public class GameManager {
         players = new ArrayList<>();
         redPlayers = new ArrayList<>();
         bluePlayers = new ArrayList<>();
+
         WorldManager.cloneWorld();
+
+        waitingSpawn = new Location(Bukkit.getWorld("TowerPlus_" + Main.id), Main.getInstance().getConfig().getDouble("location.waiting-spawn.x"),Main.getInstance().getConfig().getDouble("location.waiting-spawn.y"),Main.getInstance().getConfig().getDouble("location.waiting-spawn.z"), (float) Main.getInstance().getConfig().getDouble("location.waiting-spawn.yaw"), (float) Main.getInstance().getConfig().getDouble("location.waiting-spawn.pitch"));
+        blueSpawn = new Location(Bukkit.getWorld("TowerPlus_" + Main.id), Main.getInstance().getConfig().getDouble("location.spawn.blue.x"),Main.getInstance().getConfig().getDouble("location.spawn.blue.y"),Main.getInstance().getConfig().getDouble("location.spawn.blue.z"), (float) Main.getInstance().getConfig().getDouble("location.spawn.blue.yaw"), (float) Main.getInstance().getConfig().getDouble("location.spawn.blue.pitch"));
+        redSpawn = new Location(Bukkit.getWorld("TowerPlus_" + Main.id), Main.getInstance().getConfig().getDouble("location.spawn.red.x"),Main.getInstance().getConfig().getDouble("location.spawn.red.y"),Main.getInstance().getConfig().getDouble("location.spawn.red.z"), (float) Main.getInstance().getConfig().getDouble("location.spawn.red.yaw"), (float) Main.getInstance().getConfig().getDouble("location.spawn.red.pitch"));
+
         games.add(this);
+
+        Main.id++;
+
+
+
 
     }
 
@@ -278,7 +303,6 @@ public class GameManager {
 
         for (Player players : gameManager.getPlayers()) {
             players.sendMessage("§cThe " + team + " team has won the game!");
-            players.setGameMode(GameMode.SPECTATOR);
 
             FastBoard board = boards.remove(players.getUniqueId());
             if (board != null) {
