@@ -262,6 +262,9 @@ public class GameManager {
                                             }
 
                                         }
+                                        if (GameManager.games.size() - 1 < Main.gamesAtTheSameTime) {
+                                            new GameManager(Main.maxPlayers, Main.minPlayers, Main.points, Main.countdown);
+                                        }
                                         this.cancel();
                                     }
                                 } else {
@@ -399,9 +402,6 @@ public class GameManager {
         }
         games.remove(gameManager);
 
-        if (GameManager.games.size() < Main.gamesAtTheSameTime) {
-            new GameManager(Main.maxPlayers, Main.minPlayers, Main.points, Main.countdown);
-        }
     }
 
 
