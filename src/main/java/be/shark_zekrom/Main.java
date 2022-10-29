@@ -5,6 +5,7 @@ import fr.mrmicky.fastboard.FastBoard;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -109,6 +110,15 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        for (GameManager gameManager : GameManager.games) {
+            for (Player player : gameManager.players) {
+                player.teleport(Main.lobby);
 
+                FastBoard board = GameManager.boards.remove(player.getUniqueId());
+                if (board != null) {
+                    board.delete();
+                }
+            }
+        }
     }
 }
