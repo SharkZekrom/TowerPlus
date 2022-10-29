@@ -23,47 +23,43 @@ public class Gui implements Listener {
         player.openInventory(inventory);
 
         int[] slot = {0};
-        GameManager.games.forEach(game -> {
+        for (GameManager gameManager : GameManager.games) {
+            if (gameManager.getGameStatus() != GameManager.GameStatus.ENDING) {
 
-            ItemStack itemStack = null;
-            ArrayList<String> lore = new ArrayList<>();
-            switch (game.getGameStatus()) {
-                case WAITING:
-                    itemStack = new ItemStack(Material.GREEN_WOOL);
-                    for (String string : Main.inventory_waiting) {
-                        String newString = string.replaceAll("%max_players%", String.valueOf(game.getMaxPlayers())).replaceAll("%status%", "Waiting").replaceAll("%players%", String.valueOf(game.getPlayers().size()));
-                        lore.add(newString);
+                ItemStack itemStack = null;
+                ArrayList<String> lore = new ArrayList<>();
+                switch (gameManager.getGameStatus()) {
+                    case WAITING -> {
+                        itemStack = new ItemStack(Material.GREEN_WOOL);
+                        for (String string : Main.inventory_waiting) {
+                            String newString = string.replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers())).replaceAll("%status%", "Waiting").replaceAll("%players%", String.valueOf(gameManager.getPlayers().size()));
+                            lore.add(newString);
+                        }
                     }
-
-                    break;
-                case STARTING:
-                    itemStack = new ItemStack(Material.YELLOW_WOOL);
-
-                    for (String string : Main.inventory_starting) {
-                        String newString = string.replaceAll("%players%", String.valueOf(game.getPlayers().size())).replaceAll("%max_players%", String.valueOf(game.getMaxPlayers())).replaceAll("%status%", "Starting").replaceAll("%countdown%",String.valueOf(game.getCountdown()));
-                        lore.add(newString);
+                    case STARTING -> {
+                        itemStack = new ItemStack(Material.YELLOW_WOOL);
+                        for (String string : Main.inventory_starting) {
+                            String newString = string.replaceAll("%players%", String.valueOf(gameManager.getPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers())).replaceAll("%status%", "Starting").replaceAll("%countdown%", String.valueOf(gameManager.getCountdown()));
+                            lore.add(newString);
+                        }
                     }
-                    break;
-                case INGAME:
-                    itemStack = new ItemStack(Material.RED_WOOL);
-
-                    for (String string : Main.inventory_ingame) {
-                        String newString = string.replaceAll("%players%", String.valueOf(game.getPlayers().size())).replaceAll("%max_players%", String.valueOf(game.getMaxPlayers())).replaceAll("%status%", "Ingame").replaceAll("%red_points%", String.valueOf(game.getRedPoints())).replaceAll("%blue_points%", String.valueOf(game.getBluePoints()));
-                        lore.add(newString);
+                    case INGAME -> {
+                        itemStack = new ItemStack(Material.RED_WOOL);
+                        for (String string : Main.inventory_ingame) {
+                            String newString = string.replaceAll("%players%", String.valueOf(gameManager.getPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers())).replaceAll("%status%", "Ingame").replaceAll("%red_points%", String.valueOf(gameManager.getRedPoints())).replaceAll("%blue_points%", String.valueOf(gameManager.getBluePoints()));
+                            lore.add(newString);
+                        }
                     }
-                    break;
-                case ENDING:
-                    itemStack = new ItemStack(Material.BLACK_WOOL);
-                    break;
+                }
+                ItemMeta itemMeta = itemStack.getItemMeta();
+                itemMeta.setLore(lore);
+                itemMeta.setDisplayName(Main.inventory_game_name.replaceAll("%id%", String.valueOf(gameManager.getGameId())));
+
+                itemStack.setItemMeta(itemMeta);
+
+                inventory.setItem(slot[0]++, itemStack);
             }
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.setLore(lore);
-            itemMeta.setDisplayName(Main.inventory_game_name.replaceAll("%id%", String.valueOf(game.getGameId())));
-
-            itemStack.setItemMeta(itemMeta);
-
-            inventory.setItem(slot[0]++, itemStack);
-        });
+        }
 
     }
 
