@@ -8,8 +8,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -19,8 +21,20 @@ public class Gui implements Listener {
 
 
     public static void allGames(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 54, Main.inventory_name);
-        player.openInventory(inventory);
+
+        Inventory inventory;
+
+        if (player.getOpenInventory().getTopInventory().getType() == InventoryType.CRAFTING) {
+            inventory = Bukkit.createInventory(null, 54, Main.inventory_name);
+            player.openInventory(inventory);
+
+        } else {
+
+            player.getOpenInventory().getTopInventory().clear();
+            inventory = player.getOpenInventory().getTopInventory();
+        }
+
+
 
         int[] slot = {0};
         for (GameManager gameManager : GameManager.games) {
@@ -60,8 +74,8 @@ public class Gui implements Listener {
                 inventory.setItem(slot[0]++, itemStack);
             }
         }
-
     }
+
 
     @EventHandler
     private void onInventoryClick(InventoryClickEvent event) {
@@ -72,7 +86,7 @@ public class Gui implements Listener {
 
             if (event.getInventory().getItem(slot) != null) {
                 if (event.getInventory().getItem(slot).getType() == Material.GREEN_WOOL || event.getInventory().getItem(slot).getType() == Material.YELLOW_WOOL) {
-                    String id = event.getInventory().getItem(slot).getItemMeta().getDisplayName().replaceAll("[ a-zA-Z]", "");
+                    String id = event.getInventory().getItem(slot).getItemMeta().getDisplayName().replaceAll("[ §a-zA-Z]", "");
 
                     GameManager game = GameManager.getGameById(Integer.parseInt(id));
 

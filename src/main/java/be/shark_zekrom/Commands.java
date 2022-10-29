@@ -8,8 +8,19 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Commands implements CommandExecutor {
+
+    public static HashMap<Player, BukkitTask> runnableInventory = new HashMap<>();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -31,7 +42,16 @@ public class Commands implements CommandExecutor {
             //if (GameManager.hasPlayer(player)) {
             //   player.sendMessage("§cYou are already in a game");
             //   } else {
-                Gui.allGames(player);
+            runnableInventory.put(player,new BukkitRunnable() {
+                @Override
+                public void run() {
+
+                    Gui.allGames(player);
+
+
+                }
+            }.runTaskTimer(Main.getInstance(), 0, 20));
+
             // }
         }
         if (args[0].equals("event")) {
