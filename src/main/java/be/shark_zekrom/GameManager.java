@@ -177,8 +177,34 @@ public class GameManager {
         return blueSpawn;
     }
 
+    Integer maxPlayers;
+    public int getMaxPlayers() {
+        return maxPlayers;
+    }
+    public void setMaxPlayers(Integer maxPlayers) {
+        this.maxPlayers = maxPlayers;
+    }
 
-    public GameManager() {
+    int minPlayers;
+    public int getMinPlayers() {
+        return minPlayers;
+    }
+    public void setMinPlayers(int minPlayers) {
+        this.minPlayers = minPlayers;
+    }
+
+    int maxPoints;
+    public int getMaxPoints() {
+        return maxPoints;
+    }
+    public void setMaxPoints(int maxPoints) {
+        this.maxPoints = maxPoints;
+    }
+
+
+
+
+    public GameManager(int maxPlayers, int minPlayers, int maxPoints, int countdown) {
         gameId = Main.id;
         bluePoints = 0;
         redPoints = 0;
@@ -187,6 +213,11 @@ public class GameManager {
         players = new ArrayList<>();
         redPlayers = new ArrayList<>();
         bluePlayers = new ArrayList<>();
+        setMaxPoints(maxPoints);
+        setMinPlayers(minPlayers);
+        setCountdown(countdown);
+        setMaxPoints(maxPoints);
+        setMaxPlayers(maxPlayers);
 
         WorldManager.cloneWorld();
 
@@ -318,7 +349,7 @@ public class GameManager {
         games.remove(gameManager);
 
         if (GameManager.games.size() < Main.gamesAtTheSameTime) {
-            new GameManager();
+            new GameManager(Main.maxPlayers, Main.minPlayers, Main.points, Main.countdown);
         }
     }
 }

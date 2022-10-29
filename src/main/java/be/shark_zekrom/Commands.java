@@ -17,7 +17,7 @@ public class Commands implements CommandExecutor {
         Player player = (Player) sender;
 
         if (args[0].equals("add")) {
-            new GameManager();
+            new GameManager(Main.maxPlayers, Main.minPlayers, Main.points, Main.countdown);
         }
 
         if (args[0].equals("delete")) {

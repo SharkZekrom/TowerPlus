@@ -101,7 +101,7 @@ public class Main extends JavaPlugin {
         WorldManager.deleteAllWorld();
 
         for (int i = 0; i < gamesAtTheSameTime; i++) {
-            new GameManager();
+            new GameManager(maxPlayers, minPlayers, points, countdown);
         }
 
 
