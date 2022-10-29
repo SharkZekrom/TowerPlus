@@ -108,10 +108,8 @@ public class Gui implements Listener {
                                                 }
                                                 if (game.getBluePlayers().contains(players)) {
                                                     players.teleport(game.getBlueSpawn());
-                                                    Bukkit.broadcastMessage(game.getBlueSpawn() + "");
                                                 } else if (game.getRedPlayers().contains(players)) {
                                                     players.teleport(game.getRedSpawn());
-                                                    Bukkit.broadcastMessage(game.getRedSpawn() + "");
 
                                                 }
 

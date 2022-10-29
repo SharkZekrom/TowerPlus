@@ -6,19 +6,14 @@ public class WorldManager {
 
     public static void cloneWorld() {
 
-
         MVWorldManager worldManager = Main.core.getMVWorldManager();
-
-        worldManager.cloneWorld("creative", "TowerPlus_" + Main.id);
-
+        worldManager.cloneWorld(Main.worldToClone, Main.worldPrefix + Main.id);
     }
 
-    public static void deleteWorld(int ID) {
+    public static void deleteWorld(int id) {
 
         MVWorldManager worldManager = Main.core.getMVWorldManager();
-
-        worldManager.deleteWorld("TowerPlus_" + ID);
-
+        worldManager.deleteWorld(Main.worldPrefix + id);
     }
 
 
@@ -27,7 +22,7 @@ public class WorldManager {
         MVWorldManager worldManager = Main.core.getMVWorldManager();
 
         worldManager.getMVWorlds().forEach(world -> {
-            if (world.getName().startsWith("TowerPlus_")) {
+            if (world.getName().startsWith(Main.worldPrefix)) {
                 worldManager.deleteWorld(world.getName());
             }
         });

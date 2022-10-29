@@ -21,8 +21,8 @@ public class Main extends JavaPlugin {
 
     public static MultiverseCore core;
 
-    public static Integer id = 1, maxPlayers, minPlayers, points, countdown;
-    public static String worldToClone;
+    public static Integer id = 1, maxPlayers, minPlayers, points, countdown, gamesAtTheSameTime;
+    public static String worldToClone, worldPrefix;
     public static Location lobby;
 
     @Override
@@ -32,11 +32,9 @@ public class Main extends JavaPlugin {
 
         core = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
 
-        if (core == null) {
-            Bukkit.getLogger().severe("Multiverse-Core not found! Disabling plugin...");
-        }
-        WorldManager.deleteAllWorld();
-
+       // if (core == null) {
+         //   Bukkit.getLogger().severe("Multiverse-Core not found! Disabling plugin...");
+        //}
         this.getCommand("tower+").setExecutor(new Commands());
 
         pm.registerEvents(new Gui(), this);
@@ -51,6 +49,12 @@ public class Main extends JavaPlugin {
 
         FileConfiguration config = getConfig();
         config.addDefault("worldToClone", "tower");
+        config.addDefault("worldPrefix", "TowerPlus-");
+        config.addDefault("pointsToWin", 10);
+        config.addDefault("maxPlayer", 10);
+        config.addDefault("minPlayers", 2);
+        config.addDefault("countdown", 30);
+        config.addDefault("gamesAtTheSameTime", 10);
 
         config.addDefault("location.spawn.red.x", 0);
         config.addDefault("location.spawn.red.y", 0);
@@ -77,10 +81,6 @@ public class Main extends JavaPlugin {
         config.addDefault("location.lobby.yaw", 0);
         config.addDefault("location.lobby.pitch", 0);
 
-        config.addDefault("pointsToWin", 10);
-        config.addDefault("maxPlayer", 10);
-        config.addDefault("minPlayers", 2);
-        config.addDefault("countdown", 30);
 
 
         config.options().copyDefaults(true);
@@ -91,12 +91,16 @@ public class Main extends JavaPlugin {
         minPlayers = config.getInt("minPlayers");
         countdown = config.getInt("countdown");
         points = config.getInt("pointsToWin");
+        gamesAtTheSameTime = config.getInt("gamesAtTheSameTime");
+        worldPrefix = config.getString("worldPrefix");
 
         worldToClone = config.getString("worldToClone");
 
         lobby = new Location(Bukkit.getWorld(config.getString("location.lobby.world")), config.getDouble("location.lobby.x"),config.getDouble("location.lobby.y"),config.getDouble("location.lobby.z"), (float) config.getDouble("location.lobby.yaw"), (float) config.getDouble("location.lobby.pitch"));
 
-        for (int i = 0; i < 2; i++) {
+        WorldManager.deleteAllWorld();
+
+        for (int i = 0; i < gamesAtTheSameTime; i++) {
             new GameManager();
         }
 

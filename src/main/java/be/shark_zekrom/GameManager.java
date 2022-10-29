@@ -190,9 +190,9 @@ public class GameManager {
 
         WorldManager.cloneWorld();
 
-        waitingSpawn = new Location(Bukkit.getWorld("TowerPlus_" + Main.id), Main.getInstance().getConfig().getDouble("location.waiting-spawn.x"),Main.getInstance().getConfig().getDouble("location.waiting-spawn.y"),Main.getInstance().getConfig().getDouble("location.waiting-spawn.z"), (float) Main.getInstance().getConfig().getDouble("location.waiting-spawn.yaw"), (float) Main.getInstance().getConfig().getDouble("location.waiting-spawn.pitch"));
-        blueSpawn = new Location(Bukkit.getWorld("TowerPlus_" + Main.id), Main.getInstance().getConfig().getDouble("location.spawn.blue.x"),Main.getInstance().getConfig().getDouble("location.spawn.blue.y"),Main.getInstance().getConfig().getDouble("location.spawn.blue.z"), (float) Main.getInstance().getConfig().getDouble("location.spawn.blue.yaw"), (float) Main.getInstance().getConfig().getDouble("location.spawn.blue.pitch"));
-        redSpawn = new Location(Bukkit.getWorld("TowerPlus_" + Main.id), Main.getInstance().getConfig().getDouble("location.spawn.red.x"),Main.getInstance().getConfig().getDouble("location.spawn.red.y"),Main.getInstance().getConfig().getDouble("location.spawn.red.z"), (float) Main.getInstance().getConfig().getDouble("location.spawn.red.yaw"), (float) Main.getInstance().getConfig().getDouble("location.spawn.red.pitch"));
+        waitingSpawn = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.waiting-spawn.x"),Main.getInstance().getConfig().getDouble("location.waiting-spawn.y"),Main.getInstance().getConfig().getDouble("location.waiting-spawn.z"), (float) Main.getInstance().getConfig().getDouble("location.waiting-spawn.yaw"), (float) Main.getInstance().getConfig().getDouble("location.waiting-spawn.pitch"));
+        blueSpawn = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.spawn.blue.x"),Main.getInstance().getConfig().getDouble("location.spawn.blue.y"),Main.getInstance().getConfig().getDouble("location.spawn.blue.z"), (float) Main.getInstance().getConfig().getDouble("location.spawn.blue.yaw"), (float) Main.getInstance().getConfig().getDouble("location.spawn.blue.pitch"));
+        redSpawn = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.spawn.red.x"),Main.getInstance().getConfig().getDouble("location.spawn.red.y"),Main.getInstance().getConfig().getDouble("location.spawn.red.z"), (float) Main.getInstance().getConfig().getDouble("location.spawn.red.yaw"), (float) Main.getInstance().getConfig().getDouble("location.spawn.red.pitch"));
 
         games.add(this);
 
@@ -311,12 +311,14 @@ public class GameManager {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    players.teleport(new Location(Bukkit.getWorld("world"), 0, -60, 0));
+                    players.teleport(Main.lobby);
                 }
             }.runTaskLater(Main.getPlugin(Main.class), 20 * 5);
         }
         games.remove(gameManager);
 
-        new GameManager();
+        if (GameManager.games.size() < Main.gamesAtTheSameTime) {
+            new GameManager();
+        }
     }
 }
