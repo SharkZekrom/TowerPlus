@@ -14,8 +14,8 @@ public class GameManager {
 
     public static final Map<UUID, FastBoard> boards = new HashMap<>();
     public static ArrayList<GameManager> games = new ArrayList<>();
-
     public static Location waitingSpawn, redSpawn, blueSpawn;
+
 
     int gameId;
 
@@ -202,6 +202,10 @@ public class GameManager {
         this.maxPoints = maxPoints;
     }
 
+    long time;
+    public long getTime() {
+        return time;
+    }
 
 
 
@@ -214,6 +218,8 @@ public class GameManager {
         players = new ArrayList<>();
         redPlayers = new ArrayList<>();
         bluePlayers = new ArrayList<>();
+        time = System.currentTimeMillis();
+
         setMaxPoints(maxPoints);
         setMinPlayers(minPlayers);
         setCountdown(countdown);
