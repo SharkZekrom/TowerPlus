@@ -381,52 +381,6 @@ public class GameManager {
         player.sendMessage("§cYou have joined the " + team + " team.");
     }
 
-    public static void playerJoin(GameManager gameManager) {
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Bukkit.broadcastMessage(gameManager.getPlayers().size() + "");
-                Bukkit.broadcastMessage(gameManager.getMinPlayers() + "");
-
-                if (gameManager.getPlayers().size() >= gameManager.getMinPlayers()) {
-
-                    if (gameManager.getCountdown() == 0) {
-                        gameManager.setGameStatus(GameManager.GameStatus.INGAME);
-                        gameManager.setCountdown(Main.countdown);
-
-
-                        for (Player players : gameManager.getPlayers()) {
-                            players.getInventory().clear();
-
-                            if (!gameManager.getBluePlayers().contains(players) && !gameManager.getRedPlayers().contains(players)) {
-                                GameManager.randomTeam(gameManager, players);
-                            }
-                            if (gameManager.getBluePlayers().contains(players)) {
-                                players.teleport(gameManager.getBlueSpawn());
-                            } else if (gameManager.getRedPlayers().contains(players)) {
-                                players.teleport(gameManager.getRedSpawn());
-
-                            }
-
-                        }
-
-                        cancel();
-                    }
-                    gameManager.setGameStatus(GameManager.GameStatus.STARTING);
-                    gameManager.setCountdown(gameManager.getCountdown() - 1);
-                } else {
-                    gameManager.setGameStatus(GameManager.GameStatus.WAITING);
-                    for (Player players : gameManager.getPlayers()) {
-                        players.sendMessage("§acancelled");
-                        gameManager.setCountdown(gameManager.getCountdown());
-                    }
-                    cancel();
-                }
-            }
-        }.runTaskTimer(Main.getInstance(), 0, 20);
-    }
-
     public static void endGame(GameManager gameManager, String team) {
 
         for (Player players : gameManager.getPlayers()) {
@@ -443,6 +397,24 @@ public class GameManager {
                 }
             }.runTaskLater(Main.getPlugin(Main.class), 20 * 5);
         }
+        games.remove(gameManager);
+
+        if (GameManager.games.size() < Main.gamesAtTheSameTime) {
+            new GameManager(Main.maxPlayers, Main.minPlayers, Main.points, Main.countdown);
+        }
+    }
+
+
+    public static void forceEndGame(int id) {
+
+        GameManager gameManager = GameManager.getGameById(id);
+
+        for (Player player : gameManager.getPlayers()) {
+            player.teleport(Main.lobby);
+            player.sendMessage("§cThe game has been cancelled.");
+        }
+        WorldManager.deleteWorld(gameManager.getGameId());
+
         games.remove(gameManager);
 
         if (GameManager.games.size() < Main.gamesAtTheSameTime) {

@@ -21,8 +21,8 @@ public class Commands implements CommandExecutor {
         }
 
         if (args[0].equals("delete")) {
-            WorldManager.deleteWorld(Integer.parseInt(args[1]));
-            GameManager.getGameById(Integer.parseInt(args[1])).deleteGame();
+            GameManager.forceEndGame(Integer.parseInt(args[1]));
+
         }
         if (args[0].equals("status")) {
             GameManager.getGameById(Integer.parseInt(args[1])).setGameStatus(GameManager.GameStatus.valueOf(args[2]));

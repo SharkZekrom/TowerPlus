@@ -1,6 +1,7 @@
 package be.shark_zekrom;
 
 import com.onarandombox.MultiverseCore.api.MVWorldManager;
+import org.bukkit.entity.Player;
 
 public class WorldManager {
 
