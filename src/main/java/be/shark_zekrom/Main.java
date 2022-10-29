@@ -71,6 +71,20 @@ public class Main extends JavaPlugin {
         config.addDefault("location.spawn.blue.yaw", 0);
         config.addDefault("location.spawn.blue.pitch", 0);
 
+        config.addDefault("location.pool.red.1.x", 0);
+        config.addDefault("location.pool.red.1.y", 0);
+        config.addDefault("location.pool.red.1.z", 0);
+        config.addDefault("location.pool.red.2.x", 0);
+        config.addDefault("location.pool.red.2.y", 0);
+        config.addDefault("location.pool.red.2.z", 0);
+
+        config.addDefault("location.pool.blue.1.x", 0);
+        config.addDefault("location.pool.blue.1.y", 0);
+        config.addDefault("location.pool.blue.1.z", 0);
+        config.addDefault("location.pool.blue.2.x", 0);
+        config.addDefault("location.pool.blue.2.y", 0);
+        config.addDefault("location.pool.blue.2.z", 0);
+
         config.addDefault("location.waiting-spawn.x", 0);
         config.addDefault("location.waiting-spawn.y", 0);
         config.addDefault("location.waiting-spawn.z", 0);

@@ -14,7 +14,7 @@ public class GameManager {
 
     public static final Map<UUID, FastBoard> boards = new HashMap<>();
     public static ArrayList<GameManager> games = new ArrayList<>();
-    public static Location waitingSpawn, redSpawn, blueSpawn;
+    public static Location waitingSpawn, redSpawn, blueSpawn, pool_red_1 , pool_red_2, pool_blue_1 , pool_blue_2;
 
 
     int gameId;
@@ -210,6 +210,21 @@ public class GameManager {
         this.time = time;
     }
 
+    public Location getPool_red_1() {
+        return pool_red_1;
+    }
+    public Location getPool_red_2() {
+        return pool_red_2;
+    }
+
+    public Location getPool_blue_1() {
+        return pool_blue_1;
+    }
+
+    public Location getPool_blue_2() {
+        return pool_blue_2;
+    }
+
 
 
     public GameManager(int maxPlayers, int minPlayers, int maxPoints, int countdown) {
@@ -233,6 +248,11 @@ public class GameManager {
         waitingSpawn = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.waiting-spawn.x"), Main.getInstance().getConfig().getDouble("location.waiting-spawn.y"), Main.getInstance().getConfig().getDouble("location.waiting-spawn.z"), (float) Main.getInstance().getConfig().getDouble("location.waiting-spawn.yaw"), (float) Main.getInstance().getConfig().getDouble("location.waiting-spawn.pitch"));
         blueSpawn = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.spawn.blue.x"), Main.getInstance().getConfig().getDouble("location.spawn.blue.y"), Main.getInstance().getConfig().getDouble("location.spawn.blue.z"), (float) Main.getInstance().getConfig().getDouble("location.spawn.blue.yaw"), (float) Main.getInstance().getConfig().getDouble("location.spawn.blue.pitch"));
         redSpawn = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.spawn.red.x"), Main.getInstance().getConfig().getDouble("location.spawn.red.y"), Main.getInstance().getConfig().getDouble("location.spawn.red.z"), (float) Main.getInstance().getConfig().getDouble("location.spawn.red.yaw"), (float) Main.getInstance().getConfig().getDouble("location.spawn.red.pitch"));
+
+        pool_blue_1 = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.pool.blue.1.x"), Main.getInstance().getConfig().getDouble("location.pool.blue.1.y"), Main.getInstance().getConfig().getDouble("location.pool.blue.1.z"));
+        pool_blue_2 = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.pool.blue.2.x"), Main.getInstance().getConfig().getDouble("location.pool.blue.2.y"), Main.getInstance().getConfig().getDouble("location.pool.blue.2.z"));
+        pool_red_1 = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.pool.red.1.x"), Main.getInstance().getConfig().getDouble("location.pool.red.1.y"), Main.getInstance().getConfig().getDouble("location.pool.red.1.z"));
+        pool_red_2 = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.pool.red.2.x"), Main.getInstance().getConfig().getDouble("location.pool.red.2.y"), Main.getInstance().getConfig().getDouble("location.pool.red.2.z"));
 
         games.add(this);
 

@@ -75,13 +75,13 @@ public class Events implements Listener {
             if (gameManager.getGameStatus() == GameManager.GameStatus.INGAME) {
                 if (gameManager.getRedPlayers().contains(event.getPlayer())) {
 
-                    Cuboid cuboid = new Cuboid(new Location(event.getPlayer().getWorld(), 1.7, -44, 9.3), new Location(event.getPlayer().getWorld(), -0.7, -44, 11.7));
+                    Cuboid cuboid = new Cuboid(gameManager.getPool_blue_1(), gameManager.getPool_blue_2());
                     if (cuboid.contains(event.getPlayer().getLocation())) {
                         gameManager.addRedPoints(event.getPlayer());
                     }
 
                 } else if (gameManager.getBluePlayers().contains(event.getPlayer())) {
-                    Cuboid cuboid = new Cuboid(new Location(event.getPlayer().getWorld(), 1.7, -44, -8.3), new Location(event.getPlayer().getWorld(), -0.7, -44, -10.7));
+                    Cuboid cuboid = new Cuboid(gameManager.getPool_red_1(), gameManager.getPool_red_2());
                     if (cuboid.contains(event.getPlayer().getLocation())) {
                         gameManager.addBluePoints(event.getPlayer());
                     }
