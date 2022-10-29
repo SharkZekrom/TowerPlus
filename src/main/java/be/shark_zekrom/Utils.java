@@ -15,7 +15,7 @@ public class Utils {
         long seconds = TimeUnit.MILLISECONDS.toSeconds(cloneLongInterval);
         cloneLongInterval -= TimeUnit.SECONDS.toMillis(seconds);
 
-        String stringInterval = "%02d:%02d.%02d";
+        String stringInterval = "%02d:%02d:%02d";
         return String.format(stringInterval, hours, minutes, seconds, cloneLongInterval);
     }
 }

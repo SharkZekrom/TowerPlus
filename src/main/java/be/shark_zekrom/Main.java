@@ -92,7 +92,7 @@ public class Main extends JavaPlugin {
 
         config.addDefault("inventory.waiting", Arrays.asList("","§6Status §7» %status%", "§6Players §7» %players%", "§6Max players §7» %max_players%","","§eClick to join"));
         config.addDefault("inventory.starting", Arrays.asList("","§6Status §7» %status%", "§6Players §7» %players%", "§6Max players §7» %max_players%", "", "§eStarting in %countdown%","","§eClick to join"));
-        config.addDefault("inventory.ingame", Arrays.asList("","§6Status §7» %status%", "§6Players §7» %players%", "", "§6Red team §7» %red_points%", "§6Blue team » %blue_points%","§6Time §7» %time%","","§eClick to join in spectator"));
+        config.addDefault("inventory.ingame", Arrays.asList("","§6Status §7» %status%", "§6Players §7» %players%", "", "§6Red team §7» %red_points%", "§6Blue team » %blue_points%","§6Time §7» §e%time%","","§6Click to join in spectator"));
         config.addDefault("inventory.name", "TowerPlus");
         config.addDefault("inventory.game_name", "§eGame %id%");
 
