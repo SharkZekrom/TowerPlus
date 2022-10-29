@@ -19,7 +19,7 @@ public class Gui implements Listener {
 
 
     public static void allGames(Player player) {
-        Inventory inventory = Bukkit.createInventory(null, 54, "All Games");
+        Inventory inventory = Bukkit.createInventory(null, 54, Main.inventory_name);
         player.openInventory(inventory);
 
         int[] slot = {0};
@@ -30,23 +30,27 @@ public class Gui implements Listener {
             switch (game.getGameStatus()) {
                 case WAITING:
                     itemStack = new ItemStack(Material.GREEN_WOOL);
-                    lore.add("Status: Waiting");
-                    lore.add("Players: " + game.getPlayers().size());
-                    lore.add("Max Players: " + game.getMaxPlayers());
+                    for (String string : Main.inventory_waiting) {
+                        String newString = string.replaceAll("%max_players%", String.valueOf(game.getMaxPlayers())).replaceAll("%status%", "Waiting").replaceAll("%players%", String.valueOf(game.getPlayers().size()));
+                        lore.add(newString);
+                    }
+
                     break;
                 case STARTING:
                     itemStack = new ItemStack(Material.YELLOW_WOOL);
-                    lore.add("Status: Starting");
-                    lore.add("Players: " + game.getPlayers());
-                    lore.add("Countdown: " + game.getCountdown());
+
+                    for (String string : Main.inventory_starting) {
+                        String newString = string.replaceAll("%players%", String.valueOf(game.getPlayers().size())).replaceAll("%max_players%", String.valueOf(game.getMaxPlayers())).replaceAll("%status%", "Starting").replaceAll("%countdown%",String.valueOf(game.getCountdown()));
+                        lore.add(newString);
+                    }
                     break;
                 case INGAME:
                     itemStack = new ItemStack(Material.RED_WOOL);
-                    lore.add("Status: INGAME");
-                    lore.add("Players: " + game.getPlayers());
-                    lore.add("Red : " + game.redPoints + "(" + game.getRedPlayers().size() + ")");
-                    lore.add("Blue : " + game.bluePoints + "(" + game.getRedPlayers().size() + ")");
 
+                    for (String string : Main.inventory_ingame) {
+                        String newString = string.replaceAll("%players%", String.valueOf(game.getPlayers().size())).replaceAll("%max_players%", String.valueOf(game.getMaxPlayers())).replaceAll("%status%", "Ingame").replaceAll("%red_points%", String.valueOf(game.getRedPoints())).replaceAll("%blue_points%", String.valueOf(game.getBluePoints()));
+                        lore.add(newString);
+                    }
                     break;
                 case ENDING:
                     itemStack = new ItemStack(Material.BLACK_WOOL);
@@ -54,7 +58,8 @@ public class Gui implements Listener {
             }
             ItemMeta itemMeta = itemStack.getItemMeta();
             itemMeta.setLore(lore);
-            itemMeta.setDisplayName("Game " + game.getGameId());
+            itemMeta.setDisplayName(Main.inventory_game_name.replaceAll("%id%", String.valueOf(game.getGameId())));
+
             itemStack.setItemMeta(itemMeta);
 
             inventory.setItem(slot[0]++, itemStack);
@@ -66,7 +71,7 @@ public class Gui implements Listener {
     private void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         int slot = event.getSlot();
-        if (event.getView().getTitle().equalsIgnoreCase("All Games")) {
+        if (event.getView().getTitle().equalsIgnoreCase(Main.inventory_name)) {
             event.setCancelled(true);
 
             if (event.getInventory().getItem(slot) != null) {

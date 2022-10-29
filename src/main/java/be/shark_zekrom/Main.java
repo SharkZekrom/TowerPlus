@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Main extends JavaPlugin {
@@ -23,8 +24,9 @@ public class Main extends JavaPlugin {
     public static MultiverseCore core;
 
     public static Integer id = 1, maxPlayers, minPlayers, points, countdown, gamesAtTheSameTime;
-    public static String worldToClone, worldPrefix;
+    public static String worldToClone, worldPrefix, inventory_name, inventory_game_name;
     public static Location lobby;
+    public static ArrayList<String> inventory_waiting, inventory_starting, inventory_ingame;
 
     @Override
     public void onEnable() {
@@ -82,6 +84,17 @@ public class Main extends JavaPlugin {
         config.addDefault("location.lobby.yaw", 0);
         config.addDefault("location.lobby.pitch", 0);
 
+        config.addDefault("location.spectator.x", 0);
+        config.addDefault("location.spectator.y", 0);
+        config.addDefault("location.spectator.z", 0);
+        config.addDefault("location.spectator.yaw", 0);
+        config.addDefault("location.spectator.pitch", 0);
+
+        config.addDefault("inventory.waiting", Arrays.asList("","§6Status §7» %status%", "§6Players §7» %players%", "§6Max players §7» %max_players%","","§eClick to join"));
+        config.addDefault("inventory.starting", Arrays.asList("","§6Status §7» %status%", "§6Players §7» %players%", "§6Max players §7» %max_players%", "", "§eStarting in %countdown%","","§eClick to join"));
+        config.addDefault("inventory.ingame", Arrays.asList("","§6Status §7» %status%", "§6Players §7» %players%", "", "§6Red team §7» %red_points%", "§6Blue team » %blue_points%","§6Time §7» %time%","","§eClick to join in spectator"));
+        config.addDefault("inventory.name", "TowerPlus");
+        config.addDefault("inventory.game_name", "§eGame %id%");
 
 
         config.options().copyDefaults(true);
@@ -94,10 +107,18 @@ public class Main extends JavaPlugin {
         points = config.getInt("pointsToWin");
         gamesAtTheSameTime = config.getInt("gamesAtTheSameTime");
         worldPrefix = config.getString("worldPrefix");
+        inventory_name = config.getString("inventory.name");
+        inventory_game_name = config.getString("inventory.game_name");
 
         worldToClone = config.getString("worldToClone");
 
         lobby = new Location(Bukkit.getWorld(config.getString("location.lobby.world")), config.getDouble("location.lobby.x"),config.getDouble("location.lobby.y"),config.getDouble("location.lobby.z"), (float) config.getDouble("location.lobby.yaw"), (float) config.getDouble("location.lobby.pitch"));
+
+        inventory_waiting = (ArrayList<String>) config.getStringList("inventory.waiting");
+        inventory_starting = (ArrayList<String>) config.getStringList("inventory.starting");
+        inventory_ingame = (ArrayList<String>) config.getStringList("inventory.ingame");
+
+
 
         WorldManager.deleteAllWorld();
 
