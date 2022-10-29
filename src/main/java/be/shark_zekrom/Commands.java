@@ -34,6 +34,12 @@ public class Commands implements CommandExecutor {
                 Gui.allGames(player);
             }
         }
+        if (args[0].equals("event")) {
+            new GameManager(100, 2, Main.points, Main.countdown);
+        }
+        if (args[0].equals("modifymaxplayers")) {
+            GameManager.getGameByPlayer(player).setMinPlayers(Integer.parseInt(args[1]));
+        }
         return true;
     }
 }

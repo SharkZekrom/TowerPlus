@@ -32,6 +32,7 @@ public class Gui implements Listener {
                     itemStack = new ItemStack(Material.GREEN_WOOL);
                     lore.add("Status: Waiting");
                     lore.add("Players: " + game.getPlayers().size());
+                    lore.add("Max Players: " + game.getMaxPlayers());
                     break;
                 case STARTING:
                     itemStack = new ItemStack(Material.YELLOW_WOOL);
@@ -69,7 +70,7 @@ public class Gui implements Listener {
             event.setCancelled(true);
 
             if (event.getInventory().getItem(slot) != null) {
-                if (event.getInventory().getItem(slot).getType() == Material.GREEN_WOOL) {
+                if (event.getInventory().getItem(slot).getType() == Material.GREEN_WOOL || event.getInventory().getItem(slot).getType() == Material.YELLOW_WOOL) {
                     String id = event.getInventory().getItem(slot).getItemMeta().getDisplayName().replaceAll("[ a-zA-Z]", "");
 
                     GameManager game = GameManager.getGameById(Integer.parseInt(id));
@@ -87,47 +88,7 @@ public class Gui implements Listener {
                         player.teleport(game.getWaitingSpawn());
                         GameManager.waitingInventory(player);
 
-                        if (game.getPlayers().size() >= Main.minPlayers) {
-                            game.setCountdown(game.getCountdown());
-                            game.setGameStatus(GameManager.GameStatus.STARTING);
 
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    if (game.getPlayers().size() >= 1) {
-                                        if (game.getCountdown() == 0) {
-                                            game.setGameStatus(GameManager.GameStatus.INGAME);
-                                            game.setCountdown(Main.countdown);
-
-
-                                            for (Player players : game.getPlayers()) {
-                                                player.getInventory().clear();
-
-                                                if (!game.getBluePlayers().contains(players) && !game.getRedPlayers().contains(players)) {
-                                                    GameManager.randomTeam(game, players);
-                                                }
-                                                if (game.getBluePlayers().contains(players)) {
-                                                    players.teleport(game.getBlueSpawn());
-                                                } else if (game.getRedPlayers().contains(players)) {
-                                                    players.teleport(game.getRedSpawn());
-
-                                                }
-
-                                            }
-
-                                            cancel();
-                                        }
-                                        game.setCountdown(game.getCountdown() - 1);
-                                    } else {
-                                        game.setGameStatus(GameManager.GameStatus.WAITING);
-                                        for (Player players : game.getPlayers()) {
-                                            players.sendMessage("§acancelled");
-                                        }
-                                        cancel();
-                                    }
-                                }
-                            }.runTaskTimer(Main.getInstance(), 0, 20);
-                        }
                     } else {
                         player.sendMessage("§cThis game is full");
                     }

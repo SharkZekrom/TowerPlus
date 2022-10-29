@@ -6,6 +6,7 @@ import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -221,14 +222,65 @@ public class GameManager {
 
         WorldManager.cloneWorld();
 
-        waitingSpawn = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.waiting-spawn.x"),Main.getInstance().getConfig().getDouble("location.waiting-spawn.y"),Main.getInstance().getConfig().getDouble("location.waiting-spawn.z"), (float) Main.getInstance().getConfig().getDouble("location.waiting-spawn.yaw"), (float) Main.getInstance().getConfig().getDouble("location.waiting-spawn.pitch"));
-        blueSpawn = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.spawn.blue.x"),Main.getInstance().getConfig().getDouble("location.spawn.blue.y"),Main.getInstance().getConfig().getDouble("location.spawn.blue.z"), (float) Main.getInstance().getConfig().getDouble("location.spawn.blue.yaw"), (float) Main.getInstance().getConfig().getDouble("location.spawn.blue.pitch"));
-        redSpawn = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.spawn.red.x"),Main.getInstance().getConfig().getDouble("location.spawn.red.y"),Main.getInstance().getConfig().getDouble("location.spawn.red.z"), (float) Main.getInstance().getConfig().getDouble("location.spawn.red.yaw"), (float) Main.getInstance().getConfig().getDouble("location.spawn.red.pitch"));
+        waitingSpawn = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.waiting-spawn.x"), Main.getInstance().getConfig().getDouble("location.waiting-spawn.y"), Main.getInstance().getConfig().getDouble("location.waiting-spawn.z"), (float) Main.getInstance().getConfig().getDouble("location.waiting-spawn.yaw"), (float) Main.getInstance().getConfig().getDouble("location.waiting-spawn.pitch"));
+        blueSpawn = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.spawn.blue.x"), Main.getInstance().getConfig().getDouble("location.spawn.blue.y"), Main.getInstance().getConfig().getDouble("location.spawn.blue.z"), (float) Main.getInstance().getConfig().getDouble("location.spawn.blue.yaw"), (float) Main.getInstance().getConfig().getDouble("location.spawn.blue.pitch"));
+        redSpawn = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.spawn.red.x"), Main.getInstance().getConfig().getDouble("location.spawn.red.y"), Main.getInstance().getConfig().getDouble("location.spawn.red.z"), (float) Main.getInstance().getConfig().getDouble("location.spawn.red.yaw"), (float) Main.getInstance().getConfig().getDouble("location.spawn.red.pitch"));
 
         games.add(this);
 
         Main.id++;
+        GameManager gameManager = this;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (gameManager.getGameStatus() == GameStatus.WAITING) {
+                    if (gameManager.getPlayers().size() >= gameManager.getMinPlayers()) {
+                        gameManager.setGameStatus(GameStatus.STARTING);
+                        gameManager.setCountdown(Main.countdown);
 
+                        new BukkitRunnable() {
+                            @Override
+                            public void run() {
+                                if (gameManager.getPlayers().size() >= gameManager.getMinPlayers()) {
+
+                                    if (gameManager.getCountdown() == 0) {
+                                        gameManager.setGameStatus(GameManager.GameStatus.INGAME);
+                                        gameManager.setCountdown(Main.countdown);
+
+
+                                        for (Player players : gameManager.getPlayers()) {
+                                            players.getInventory().clear();
+
+                                            if (!gameManager.getBluePlayers().contains(players) && !gameManager.getRedPlayers().contains(players)) {
+                                                GameManager.randomTeam(gameManager, players);
+                                            }
+                                            if (gameManager.getBluePlayers().contains(players)) {
+                                                players.teleport(gameManager.getBlueSpawn());
+                                            } else if (gameManager.getRedPlayers().contains(players)) {
+                                                players.teleport(gameManager.getRedSpawn());
+
+                                            }
+
+                                        }
+                                        this.cancel();
+                                    }
+                                } else {
+                                    this.cancel();
+                                    gameManager.setGameStatus(GameManager.GameStatus.WAITING);
+                                    for (Player players : gameManager.getPlayers()) {
+                                        players.sendMessage("§acancelled");
+
+                                        gameManager.setCountdown(gameManager.getCountdown());
+                                    }
+                                }
+                                gameManager.setCountdown(gameManager.getCountdown() - 1);
+                            }
+                        }.runTaskTimer(Main.getInstance(), 0, 20);
+
+                    }
+                }
+            }
+        }.runTaskTimer(Main.getInstance(), 0, 20);
 
 
 
@@ -260,21 +312,21 @@ public class GameManager {
                 board.updateLines(
                         "Waiting for players",
                         "ID > TowerPlus-" + game.getGameId(),
-                        "players: " + game.getPlayers().size() + "/" + Main.maxPlayers
+                        "players: " + game.getPlayers().size() + "/" + game.getMaxPlayers()
                 );
                 break;
             case STARTING:
                 board.updateLines(
                         "Starting in " + game.getCountdown(),
                         "ID > TowerPlus-" + game.getGameId(),
-                        "players: " + game.getPlayers().size() + "/" + Main.maxPlayers
+                        "players: " + game.getPlayers().size() + "/" + game.getMaxPlayers()
                 );
                 break;
             case INGAME:
                 board.updateLines(
                         "Red points: " + game.getRedPoints(),
                         "Blue points: " + game.getBluePoints(),
-                        "players: " + game.getPlayers().size() + "/" + Main.maxPlayers
+                        "players: " + game.getPlayers().size() + "/" + game.getMaxPlayers()
 
 
                 );
@@ -329,6 +381,51 @@ public class GameManager {
         player.sendMessage("§cYou have joined the " + team + " team.");
     }
 
+    public static void playerJoin(GameManager gameManager) {
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                Bukkit.broadcastMessage(gameManager.getPlayers().size() + "");
+                Bukkit.broadcastMessage(gameManager.getMinPlayers() + "");
+
+                if (gameManager.getPlayers().size() >= gameManager.getMinPlayers()) {
+
+                    if (gameManager.getCountdown() == 0) {
+                        gameManager.setGameStatus(GameManager.GameStatus.INGAME);
+                        gameManager.setCountdown(Main.countdown);
+
+
+                        for (Player players : gameManager.getPlayers()) {
+                            players.getInventory().clear();
+
+                            if (!gameManager.getBluePlayers().contains(players) && !gameManager.getRedPlayers().contains(players)) {
+                                GameManager.randomTeam(gameManager, players);
+                            }
+                            if (gameManager.getBluePlayers().contains(players)) {
+                                players.teleport(gameManager.getBlueSpawn());
+                            } else if (gameManager.getRedPlayers().contains(players)) {
+                                players.teleport(gameManager.getRedSpawn());
+
+                            }
+
+                        }
+
+                        cancel();
+                    }
+                    gameManager.setGameStatus(GameManager.GameStatus.STARTING);
+                    gameManager.setCountdown(gameManager.getCountdown() - 1);
+                } else {
+                    gameManager.setGameStatus(GameManager.GameStatus.WAITING);
+                    for (Player players : gameManager.getPlayers()) {
+                        players.sendMessage("§acancelled");
+                        gameManager.setCountdown(gameManager.getCountdown());
+                    }
+                    cancel();
+                }
+            }
+        }.runTaskTimer(Main.getInstance(), 0, 20);
+    }
 
     public static void endGame(GameManager gameManager, String team) {
 
