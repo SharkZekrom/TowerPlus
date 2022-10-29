@@ -26,7 +26,7 @@ public class Main extends JavaPlugin {
     public static Integer id = 1, maxPlayers, minPlayers, points, countdown, gamesAtTheSameTime;
     public static String worldToClone, worldPrefix, inventory_name, inventory_game_name;
     public static Location lobby;
-    public static ArrayList<String> inventory_waiting, inventory_starting, inventory_ingame;
+    public static ArrayList<String> inventory_waiting, inventory_starting, inventory_ingame, scoreboard_waiting, scoreboard_starting, scoreboard_ingame, scoreboard_ending;
 
     @Override
     public void onEnable() {
@@ -110,6 +110,10 @@ public class Main extends JavaPlugin {
         config.addDefault("inventory.name", "TowerPlus");
         config.addDefault("inventory.game_name", "§eGame %id%");
 
+        config.addDefault("scoreboard.waiting", Arrays.asList("Waiting for players","ID > TowerPlus-%id%","players: %players%/%max_players%"));
+        config.addDefault("scoreboard.starting", Arrays.asList("Starting in %countdown%","ID > TowerPlus-%id%", "players: %players%/%max_players%"));
+        config.addDefault("scoreboard.ingame", Arrays.asList("Red points: %red_points%", "Blue points: %blue_points%","players: %players%", "Time: %time%"));
+        config.addDefault("scoreboard.endgame", Arrays.asList("","Finish",""));
 
         config.options().copyDefaults(true);
         saveConfig();
@@ -132,6 +136,10 @@ public class Main extends JavaPlugin {
         inventory_starting = (ArrayList<String>) config.getStringList("inventory.starting");
         inventory_ingame = (ArrayList<String>) config.getStringList("inventory.ingame");
 
+        scoreboard_waiting = (ArrayList<String>) config.getStringList("scoreboard.waiting");
+        scoreboard_starting = (ArrayList<String>) config.getStringList("scoreboard.starting");
+        scoreboard_ingame = (ArrayList<String>) config.getStringList("scoreboard.ingame");
+        scoreboard_ending = (ArrayList<String>) config.getStringList("scoreboard.endgame");
 
 
         WorldManager.deleteAllWorld();

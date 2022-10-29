@@ -337,43 +337,36 @@ public class GameManager {
 
 
     public static void updateBoard(FastBoard board) {
-        GameManager game = getGameById(getGameIdByPlayer(board.getPlayer()));
+        GameManager gameManager = getGameById(getGameIdByPlayer(board.getPlayer()));
+        ArrayList<String> newString = new ArrayList<>();
 
-        switch (game.getGameStatus()) {
+        switch (gameManager.getGameStatus()) {
             case WAITING:
-                board.updateLines(
-                        "Waiting for players",
-                        "ID > TowerPlus-" + game.getGameId(),
-                        "players: " + game.getPlayers().size() + "/" + game.getMaxPlayers()
-                );
+                ArrayList<String> scoreboard_waiting = Main.scoreboard_waiting;
+                for (String line : scoreboard_waiting) {
+                    newString.add(line.replace("%id%", String.valueOf(gameManager.getGameId())).replace("%players%", String.valueOf(gameManager.getPlayers().size())).replace("%max_players%", String.valueOf(gameManager.getMaxPlayers())));
+                }
                 break;
             case STARTING:
-                board.updateLines(
-                        "Starting in " + game.getCountdown(),
-                        "ID > TowerPlus-" + game.getGameId(),
-                        "players: " + game.getPlayers().size() + "/" + game.getMaxPlayers()
-                );
+                ArrayList<String> scoreboard_starting = Main.scoreboard_starting;
+
+                for (String line : scoreboard_starting) {
+                    newString.add(line.replace("%id%", String.valueOf(gameManager.getGameId())).replace("%players%", String.valueOf(gameManager.getPlayers().size())).replace("%max_players%", String.valueOf(gameManager.getMaxPlayers())).replaceAll("%countdown%", String.valueOf(gameManager.getCountdown())).replaceAll("%min_players%", String.valueOf(gameManager.getMinPlayers())));
+                }
                 break;
             case INGAME:
+                ArrayList<String> scoreboard_ingame = Main.scoreboard_ingame;
 
-
-
-                board.updateLines(
-                        "Red points: " + game.getRedPoints(),
-                        "Blue points: " + game.getBluePoints(),
-                        "players: " + game.getPlayers().size() + "/" + game.getMaxPlayers(),
-                        "time: " + Utils.getIntervalTime(game.getTime())
-
-                );
+                for (String line : scoreboard_ingame) {
+                    newString.add(line.replaceAll("%players%", String.valueOf(gameManager.getPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers())).replaceAll("%status%", "Ingame").replaceAll("%red_points%", String.valueOf(gameManager.getRedPoints())).replaceAll("%blue_points%", String.valueOf(gameManager.getBluePoints())).replaceAll("%time%", Utils.getIntervalTime(gameManager.getTime())));
+                }
                 break;
             case ENDING:
-                board.updateLines(
-                        "",
-                        "Finish",
-                        ""
-                );
+                board.updateLines(Main.scoreboard_ending);
                 break;
         }
+        board.updateLines(newString);
+
     }
 
 
