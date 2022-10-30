@@ -110,10 +110,17 @@ public class Main extends JavaPlugin {
         config.addDefault("inventory.name", "TowerPlus");
         config.addDefault("inventory.game_name", "§eGame %id%");
 
+        config.addDefault("scoreboard.title", "TowerPlus");
         config.addDefault("scoreboard.waiting", Arrays.asList("Waiting for players","ID > TowerPlus-%id%","players: %players%/%max_players%"));
         config.addDefault("scoreboard.starting", Arrays.asList("Starting in %countdown%","ID > TowerPlus-%id%", "players: %players%/%max_players%"));
         config.addDefault("scoreboard.ingame", Arrays.asList("Red points: %red_points%", "Blue points: %blue_points%","players: %players%", "Time: %time%"));
         config.addDefault("scoreboard.endgame", Arrays.asList("","Finish",""));
+
+        config.addDefault("message.leave_message", "§a%player% §7leave the game %players%/%max_players%");
+        config.addDefault("message.join_message", "§a%player% §7join the game %players%/%max_players%");
+        config.addDefault("message.start_message", "§aThe game start in %countdown%");
+        config.addDefault("message.more_players", "§cNot enough players to start the game");
+
 
         config.options().copyDefaults(true);
         saveConfig();

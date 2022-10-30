@@ -30,8 +30,7 @@ public class Events implements Listener {
                 GameManager.returnInventory(player);
 
                 for (Player players : gameManager.getPlayers()) {
-                    players.sendMessage("§a" + player.getName() + " §7leave the game" + gameManager.getPlayers().size() + "/10");
-
+                    players.sendMessage(Main.getInstance().getConfig().getString("message.leave_message").replaceAll("%player%", player.getName()).replaceAll("%players%", String.valueOf(gameManager.getPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers())));
                 }
             }
         }

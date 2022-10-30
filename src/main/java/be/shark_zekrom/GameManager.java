@@ -299,10 +299,9 @@ public class GameManager {
                                 } else {
                                     this.cancel();
                                     gameManager.setGameStatus(GameManager.GameStatus.WAITING);
+                                    gameManager.setCountdown(gameManager.getCountdown());
                                     for (Player players : gameManager.getPlayers()) {
-                                        players.sendMessage("§acancelled");
-
-                                        gameManager.setCountdown(gameManager.getCountdown());
+                                        players.sendMessage(Main.getInstance().getConfig().getString("message.more_players"));
                                     }
                                 }
                                 gameManager.setCountdown(gameManager.getCountdown() - 1);

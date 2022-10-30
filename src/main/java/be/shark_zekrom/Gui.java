@@ -98,11 +98,12 @@ public class Gui implements Listener {
                     if (game.getPlayers().size() < Main.maxPlayers) {
                         for (Player players : game.getPlayers()) {
                             players.sendMessage("§a" + player.getName() + " §7has joined the game " + game.getPlayers().size() + "/10");
+                            players.sendMessage(Main.getInstance().getConfig().getString("message.join_message").replaceAll("%player%", player.getName()).replaceAll("%players%", String.valueOf(game.getPlayers().size())).replaceAll("%max_players%", String.valueOf(game.getMaxPlayers())));
                         }
 
                         game.addPlayer(player);
                         FastBoard board = new FastBoard(player);
-                        board.updateTitle("Tower+");
+                        board.updateTitle(Main.getInstance().getConfig().getString("scoreboard.title"));
 
                         GameManager.boards.put(player.getUniqueId(), board);
                         player.teleport(game.getWaitingSpawn());
