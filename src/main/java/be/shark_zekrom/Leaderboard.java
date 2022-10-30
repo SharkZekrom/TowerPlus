@@ -36,29 +36,59 @@ public class Leaderboard {
         new BukkitRunnable() {
             @Override
             public void run() {
-                hologram.getLines().clear();
-                hologram.getLines().appendText("Leaderboard");
-                hologram.getLines().appendText(" ");
 
-                LinkedHashMap<String, Integer> data = getData("game_played",5);
 
-                int index = 1;
-                for (String key : data.keySet()) {
-                    hologram.getLines().appendText( index + ". " + Bukkit.getOfflinePlayer(UUID.fromString(key)).getName() + " : " + data.get(key));
-                    index++;
-                }
-                if (data.size() < 5) {
-                    for (int i = 0; i < 5 - data.size(); i++) {
-                        hologram.getLines().appendText(index + ". ");
-                        index++;
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+
+                        LinkedHashMap<String, Integer> data = getData("game_played",5);
+                        leaderboardUpdate(data,"game_played", hologram);
                     }
-                }
+                }.runTaskLater(Main.getInstance(), 0);
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        LinkedHashMap<String, Integer> data = getData("game_won",5);
+                        leaderboardUpdate(data,"game_won", hologram);
+                    }
+                }.runTaskLater(Main.getInstance(), 20);
+
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+
+                        LinkedHashMap<String, Integer> data = getData("points_scored",5);
+                        leaderboardUpdate(data,"points_scored", hologram);
+                    }
+                }.runTaskLater(Main.getInstance(), 40);
+
             }
 
-        }.runTaskTimer(Main.getInstance(), 0, 20);
+        }.runTaskTimer(Main.getInstance(), 0, 60);
     }
 
+    private static void leaderboardUpdate(LinkedHashMap<String, Integer> data,String table, Hologram hologram) {
+        hologram.getLines().clear();
+        hologram.getLines().appendText("Leaderboard");
+        hologram.getLines().appendText(table);
+        hologram.getLines().appendText(" ");
 
+
+        int index = 1;
+        for (String key : data.keySet()) {
+            hologram.getLines().appendText( index + ". " + Bukkit.getOfflinePlayer(UUID.fromString(key)).getName() + " : " + data.get(key));
+            index++;
+        }
+        if (data.size() < 5) {
+            for (int i = 0; i < 5 - data.size(); i++) {
+                hologram.getLines().appendText(index + ". ");
+                index++;
+            }
+        }
+    }
 
 
     public static LinkedHashMap<String, Integer> getData(String table, int number) {
