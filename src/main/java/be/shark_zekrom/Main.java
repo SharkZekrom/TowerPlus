@@ -30,7 +30,7 @@ public class Main extends JavaPlugin {
     public static Integer id = 1, maxPlayersPerTeam, minPlayersToStart, points, countdown, gamesAtTheSameTime;
     public static String worldToClone, worldPrefix, inventory_game_name, inventory_game_id, inventory_team_name, inventory_team_red, inventory_team_blue, inventory_team_random;
     public static Location lobby;
-    public static ArrayList<String> inventory_waiting, inventory_starting, inventory_ingame, scoreboard_waiting, scoreboard_starting, scoreboard_ingame, scoreboard_ending;
+    public static ArrayList<String> inventory_waiting, inventory_starting, inventory_ingame, scoreboard_waiting, scoreboard_starting, scoreboard_ingame, scoreboard_ending, leaderboard_game_played, leaderboard_game_won, leaderboard_points_scored;
 
     public static Database db;
 
@@ -136,6 +136,11 @@ public class Main extends JavaPlugin {
         config.addDefault("scoreboard.starting", Arrays.asList("Starting in %countdown%","ID > TowerPlus-%id%", "players: %players%/%max_players%"));
         config.addDefault("scoreboard.ingame", Arrays.asList("Red points: %red_points%", "Blue points: %blue_points%","players: %players%", "Time: %time%"));
         config.addDefault("scoreboard.endgame", Arrays.asList("","Finish",""));
+
+        config.addDefault("leaderboard.game_played",Arrays.asList("Leaderboard","game_played","","%1%","%2%","%3%","%4%","%5%"));
+        config.addDefault("leaderboard.game_won",Arrays.asList("Leaderboard","game_won","","%1%","%2%","%3%","%4%","%5%"));
+        config.addDefault("leaderboard.points_scored",Arrays.asList("Leaderboard","points_scored","","%1%","%2%","%3%","%4%","%5%"));
+
 
         config.addDefault("message.leave_message", "§a%player% §7leave the game %players%/%max_players%");
         config.addDefault("message.join_message", "§a%player% §7join the game %players%/%max_players%");
