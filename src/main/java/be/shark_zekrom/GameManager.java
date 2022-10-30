@@ -447,15 +447,53 @@ public class GameManager {
 
     }
 
+    public static void forceStart(GameManager gameManager) {
 
-    public static void forceEndGame(int id) {
+        gameManager.setGameStatus(GameManager.GameStatus.INGAME);
+        gameManager.setTime(System.currentTimeMillis());
 
-        GameManager gameManager = GameManager.getGameById(id);
+        for (Player players : gameManager.getPlayers()) {
+            players.getInventory().clear();
+
+            if (!gameManager.getBluePlayers().contains(players) && !gameManager.getRedPlayers().contains(players)) {
+                GameManager.randomTeam(gameManager, players);
+            }
+            if (gameManager.getBluePlayers().contains(players)) {
+                players.teleport(gameManager.getBlueSpawn());
+            } else if (gameManager.getRedPlayers().contains(players)) {
+                players.teleport(gameManager.getRedSpawn());
+
+            }
+
+        }
+        int count = 0;
+        for (GameManager games : games) {
+            if (games.getGameStatus() == GameStatus.WAITING) {
+                count++;
+            }
+        }
+
+        if (count < Main.gamesAtTheSameTime) {
+            new GameManager(Main.maxPlayersPerTeam, Main.minPlayersToStart, Main.points, Main.countdown);
+        }
+
+
+
+    }
+
+    public static void forceEnd(GameManager gameManager) {
 
         for (Player player : gameManager.getPlayers()) {
             player.teleport(Main.lobby);
             player.sendMessage("§cThe game has been cancelled.");
+
+            FastBoard board = boards.remove(player.getUniqueId());
+            if (board != null) {
+                board.delete();
+            }
         }
+
+
         WorldManager.deleteWorld(gameManager.getGameId());
 
         games.remove(gameManager);

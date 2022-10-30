@@ -21,11 +21,6 @@ public class Commands implements CommandExecutor {
         if (args[0].equals("add")) {
             new GameManager(Main.maxPlayersPerTeam, Main.minPlayersToStart, Main.points, Main.countdown);
         }
-
-        if (args[0].equals("delete")) {
-            GameManager.forceEndGame(Integer.parseInt(args[1]));
-
-        }
         if (args[0].equals("status")) {
             GameManager.getGameById(Integer.parseInt(args[1])).setGameStatus(GameManager.GameStatus.valueOf(args[2]));
         }
@@ -50,6 +45,14 @@ public class Commands implements CommandExecutor {
         }
         if (args[0].equals("modifymaxplayers")) {
             GameManager.getGameByPlayer(player).setMinPlayers(Integer.parseInt(args[1]));
+        }
+
+        if (args[0].equals("forcestart")) {
+            GameManager.forceStart(GameManager.getGameByPlayer(player));
+        }
+        if (args[0].equals("forceend")) {
+            GameManager.forceEnd(GameManager.getGameByPlayer(player));
+
         }
         return true;
     }
