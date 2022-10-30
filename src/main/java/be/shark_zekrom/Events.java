@@ -145,19 +145,17 @@ public class Events implements Listener {
         Player player = event.getPlayer();
         if (GameManager.hasPlayer(player)) {
             GameManager gameManager = GameManager.getGameByPlayer(player);
-            if (gameManager.getGameStatus() == GameManager.GameStatus.INGAME) {
-                Location location = null;
+            Location location = null;
 
-                if (gameManager.getRedPlayers().contains(player)) {
-                    location = gameManager.getRedSpawn();
-                } else if (gameManager.getBluePlayers().contains(player)) {
-                    location = gameManager.getBlueSpawn();
-
-                }
-                location.setWorld(Bukkit.getWorld(Main.worldPrefix + gameManager.gameId));
-                event.setRespawnLocation(location);
+            if (gameManager.getRedPlayers().contains(player)) {
+                location = gameManager.getRedSpawn();
+            } else if (gameManager.getBluePlayers().contains(player)) {
+                location = gameManager.getBlueSpawn();
 
             }
+            location.setWorld(Bukkit.getWorld(Main.worldPrefix + gameManager.gameId));
+            event.setRespawnLocation(location);
+
         }
     }
 
