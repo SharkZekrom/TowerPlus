@@ -10,20 +10,29 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 
+
 public class SQLite extends Database{
     String dbname;
     public SQLite(Main instance){
         super(instance);
-        dbname = plugin.getConfig().getString("SQLite.Filename", "table_name"); // Set the table name here e.g player_kills
+        dbname = plugin.getConfig().getString("SQLite.Filename", "database"); // Set the table name here e.g player_kills
     }
 
-    public String SQLiteCreateTokensTable = "CREATE TABLE IF NOT EXISTS table_name (" + // make sure to put your table name in here too.
-            "`player` varchar(32) NOT NULL," + // This creates the different colums you will save data too. varchar(32) Is a string, int = integer
-            "`kills` int(11) NOT NULL," +
-            "`total` int(11) NOT NULL," +
-            "PRIMARY KEY (`player`)" +  // This is creating 3 colums Player, Kills, Total. Primary key is what you are going to use as your indexer. Here we want to use player so
-            ");"; // we can search by player, and get kills and total. If you some how were searching kills it would provide total and player.
-
+    public String game_played = "CREATE TABLE IF NOT EXISTS game_played (" +
+                "`uuid` varchar(32) NOT NULL," +
+                "`game_played` int(100) NOT NULL," +
+                "PRIMARY KEY (`uuid`)" +
+                ");";
+    public String game_won = "CREATE TABLE IF NOT EXISTS game_won (" +
+            "`uuid` varchar(32) NOT NULL," +
+            "`game_won` int(100) NOT NULL," +
+            "PRIMARY KEY (`uuid`)" +
+            ");";
+    public String points_scored = "CREATE TABLE IF NOT EXISTS points_scored (" +
+            "`uuid` varchar(32) NOT NULL," +
+            "`points_scored` int(100) NOT NULL," +
+            "PRIMARY KEY (`uuid`)" +
+            ");";
 
     // SQL creation stuff, You can leave the blow stuff untouched.
     public Connection getSQLConnection() {
@@ -54,11 +63,14 @@ public class SQLite extends Database{
         connection = getSQLConnection();
         try {
             Statement s = connection.createStatement();
-            s.executeUpdate(SQLiteCreateTokensTable);
+            s.executeUpdate(game_played);
+            s.executeUpdate(game_won);
+            s.executeUpdate(points_scored);
+
             s.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        initialize();
+       // initialize();
     }
 }

@@ -30,18 +30,18 @@ public class Main extends JavaPlugin {
     public static Location lobby;
     public static ArrayList<String> inventory_waiting, inventory_starting, inventory_ingame, scoreboard_waiting, scoreboard_starting, scoreboard_ingame, scoreboard_ending;
 
-    private Database db;
+    public static Database db;
 
     public Database getRDatabase() {
-        return this.db;
+        return db;
     }
 
     @Override
     public void onEnable() {
         instance = this;
         PluginManager pm = getServer().getPluginManager();
-        this.db = new SQLite(this);
-        this.db.load();
+        db = new SQLite(this);
+        db.load();
 
         core = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
 
@@ -197,3 +197,4 @@ public class Main extends JavaPlugin {
         }
     }
 }
+

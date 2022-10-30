@@ -1,5 +1,7 @@
 package be.shark_zekrom;
 
+import be.shark_zekrom.database.Database;
+import be.shark_zekrom.database.Errors;
 import org.apache.commons.lang.math.IntRange;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -18,8 +20,12 @@ import org.bukkit.event.player.*;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class Events implements Listener {
 
@@ -63,6 +69,15 @@ public class Events implements Listener {
     @EventHandler
     private void onJoin(PlayerJoinEvent event) {
         event.getPlayer().teleport(Main.lobby);
+         if (!Main.db.hasAccount(String.valueOf(event.getPlayer().getUniqueId()), "game_played")) {
+             Main.db.initializeAccount(event.getPlayer(), "game_played");
+         }
+        if (!Main.db.hasAccount(String.valueOf(event.getPlayer().getUniqueId()), "game_won")) {
+            Main.db.initializeAccount(event.getPlayer(), "game_won");
+        }
+        if (!Main.db.hasAccount(String.valueOf(event.getPlayer().getUniqueId()), "points_scored")) {
+            Main.db.initializeAccount(event.getPlayer(), "points_scored");
+        }
     }
 
     @EventHandler
