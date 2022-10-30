@@ -35,7 +35,9 @@ public class GameManager {
             players.getPlayer().sendMessage("Blue team has scored a point! (" + bluePoints + ")");
         }
 
-        player.teleport(new Location(player.getWorld(), 0, -42, 0));
+        Location location = this.getBlueSpawn();
+        location.setWorld(Bukkit.getWorld(Main.worldPrefix + getGameIdByPlayer(player)));
+        player.teleport(location);
         if (bluePoints == Main.points) {
             this.setGameStatus(GameStatus.ENDING);
             endGame(this, "blue");
@@ -57,7 +59,9 @@ public class GameManager {
         for (Player players : this.getPlayers()) {
             players.getPlayer().sendMessage("Red team has scored a point! (" + redPoints + ")");
         }
-        player.teleport(new Location(player.getWorld(), 0, -42, 0));
+        Location location = this.getRedSpawn();
+        location.setWorld(Bukkit.getWorld(Main.worldPrefix + getGameIdByPlayer(player)));
+        player.teleport(location);
         if (redPoints == Main.points) {
             this.setGameStatus(GameStatus.ENDING);
             endGame(this, "red");
@@ -232,21 +236,20 @@ public class GameManager {
 
 
 
-    public GameManager(int maxPlayers, int minPlayers, int maxPoints, int countdown) {
+    public GameManager(int maxPlayersPerTeam, int minPlayersToStart, int maxPoints, int countdown) {
         gameId = Main.id;
         bluePoints = 0;
         redPoints = 0;
-        countdown = Main.countdown;
         gameStatus = GameStatus.WAITING;
         players = new ArrayList<>();
         redPlayers = new ArrayList<>();
         bluePlayers = new ArrayList<>();
 
         setMaxPoints(maxPoints);
-        setMinPlayers(minPlayers);
+        setMinPlayers(minPlayersToStart);
         setCountdown(countdown);
         setMaxPoints(maxPoints);
-        setMaxPlayers(maxPlayers);
+        setMaxPlayers(maxPlayersPerTeam);
 
         WorldManager.cloneWorld();
 
@@ -303,7 +306,7 @@ public class GameManager {
                                         }
 
                                         if (count < Main.gamesAtTheSameTime) {
-                                            new GameManager(Main.maxPlayers, Main.minPlayers, Main.points, Main.countdown);
+                                            new GameManager(Main.maxPlayersPerTeam, Main.minPlayersToStart, Main.points, Main.countdown);
                                         }
                                         this.cancel();
                                     }
@@ -354,21 +357,21 @@ public class GameManager {
             case WAITING:
                 ArrayList<String> scoreboard_waiting = Main.scoreboard_waiting;
                 for (String line : scoreboard_waiting) {
-                    newString.add(line.replace("%id%", String.valueOf(gameManager.getGameId())).replace("%players%", String.valueOf(gameManager.getPlayers().size())).replace("%max_players%", String.valueOf(gameManager.getMaxPlayers())));
+                    newString.add(line.replace("%id%", String.valueOf(gameManager.getGameId())).replace("%players%", String.valueOf(gameManager.getPlayers().size())).replace("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)));
                 }
                 break;
             case STARTING:
                 ArrayList<String> scoreboard_starting = Main.scoreboard_starting;
 
                 for (String line : scoreboard_starting) {
-                    newString.add(line.replace("%id%", String.valueOf(gameManager.getGameId())).replace("%players%", String.valueOf(gameManager.getPlayers().size())).replace("%max_players%", String.valueOf(gameManager.getMaxPlayers())).replaceAll("%countdown%", String.valueOf(gameManager.getCountdown())).replaceAll("%min_players%", String.valueOf(gameManager.getMinPlayers())));
+                    newString.add(line.replace("%id%", String.valueOf(gameManager.getGameId())).replace("%players%", String.valueOf(gameManager.getPlayers().size())).replace("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)).replaceAll("%countdown%", String.valueOf(gameManager.getCountdown())).replaceAll("%min_players%", String.valueOf(gameManager.getMinPlayers())));
                 }
                 break;
             case INGAME:
                 ArrayList<String> scoreboard_ingame = Main.scoreboard_ingame;
 
                 for (String line : scoreboard_ingame) {
-                    newString.add(line.replaceAll("%players%", String.valueOf(gameManager.getPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers())).replaceAll("%status%", "Ingame").replaceAll("%red_points%", String.valueOf(gameManager.getRedPoints())).replaceAll("%blue_points%", String.valueOf(gameManager.getBluePoints())).replaceAll("%time%", Utils.getIntervalTime(gameManager.getTime())));
+                    newString.add(line.replaceAll("%players%", String.valueOf(gameManager.getPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)).replaceAll("%status%", "Ingame").replaceAll("%red_points%", String.valueOf(gameManager.getRedPoints())).replaceAll("%blue_points%", String.valueOf(gameManager.getBluePoints())).replaceAll("%time%", Utils.getIntervalTime(gameManager.getTime())));
                 }
                 break;
             case ENDING:
@@ -382,8 +385,16 @@ public class GameManager {
 
     public static void waitingInventory(Player player) {
         player.getInventory().clear();
-        player.getInventory().setItem(4, new ItemStack(Material.WHITE_BANNER));
         player.getInventory().setItem(8, new ItemStack(Material.BARRIER));
+
+        GameManager gameManager = getGameByPlayer(player);
+        if (gameManager.getRedPlayers().contains(player)) {
+            player.getInventory().setItem(4, new ItemStack(Material.RED_BANNER));
+        } else if (gameManager.getBluePlayers().contains(player)) {
+            player.getInventory().setItem(4, new ItemStack(Material.BLUE_BANNER));
+        } else {
+            player.getInventory().setItem(4, new ItemStack(Material.WHITE_BANNER));
+        }
 
     }
 
@@ -450,7 +461,7 @@ public class GameManager {
         games.remove(gameManager);
 
         if (GameManager.games.size() < Main.gamesAtTheSameTime) {
-            new GameManager(Main.maxPlayers, Main.minPlayers, Main.points, Main.countdown);
+            new GameManager(Main.maxPlayersPerTeam, Main.minPlayersToStart, Main.points, Main.countdown);
         }
     }
 }

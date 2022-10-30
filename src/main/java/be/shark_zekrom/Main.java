@@ -23,8 +23,8 @@ public class Main extends JavaPlugin {
 
     public static MultiverseCore core;
 
-    public static Integer id = 1, maxPlayers, minPlayers, points, countdown, gamesAtTheSameTime;
-    public static String worldToClone, worldPrefix, inventory_game_name, inventory_game_id, inventory_team_name, inventory_team_red, inventory_team_blue;
+    public static Integer id = 1, maxPlayersPerTeam, minPlayersToStart, points, countdown, gamesAtTheSameTime;
+    public static String worldToClone, worldPrefix, inventory_game_name, inventory_game_id, inventory_team_name, inventory_team_red, inventory_team_blue, inventory_team_random;
     public static Location lobby;
     public static ArrayList<String> inventory_waiting, inventory_starting, inventory_ingame, scoreboard_waiting, scoreboard_starting, scoreboard_ingame, scoreboard_ending;
 
@@ -54,8 +54,8 @@ public class Main extends JavaPlugin {
         config.addDefault("worldToClone", "tower");
         config.addDefault("worldPrefix", "TowerPlus-");
         config.addDefault("pointsToWin", 10);
-        config.addDefault("maxPlayer", 10);
-        config.addDefault("minPlayers", 2);
+        config.addDefault("maxPlayerPerTeam", 5);
+        config.addDefault("minPlayersToStart", 2);
         config.addDefault("countdown", 30);
         config.addDefault("gamesAtTheSameTime", 10);
 
@@ -112,6 +112,11 @@ public class Main extends JavaPlugin {
         config.addDefault("inventory.team.name", "Teams");
         config.addDefault("inventory.team.red", "Red");
         config.addDefault("inventory.team.blue", "Blue");
+        config.addDefault("inventory.team.random", "Random");
+        config.addDefault("message.team_change_blue","§aYou joined the blue team!");
+        config.addDefault("message.team_change_red","§aYou joined the red team!");
+        config.addDefault("message.team_change_random","§aYou joined a random team!");
+        config.addDefault("message.team_change_full","§cThis team is full!");
 
         config.addDefault("scoreboard.title", "TowerPlus");
         config.addDefault("scoreboard.waiting", Arrays.asList("Waiting for players","ID > TowerPlus-%id%","players: %players%/%max_players%"));
@@ -132,8 +137,8 @@ public class Main extends JavaPlugin {
         saveConfig();
 
 
-        maxPlayers = config.getInt("maxPlayer");
-        minPlayers = config.getInt("minPlayers");
+        maxPlayersPerTeam = config.getInt("maxPlayerPerTeam");
+        minPlayersToStart = config.getInt("minPlayersToStart");
         countdown = config.getInt("countdown");
         points = config.getInt("pointsToWin");
         gamesAtTheSameTime = config.getInt("gamesAtTheSameTime");
@@ -143,6 +148,7 @@ public class Main extends JavaPlugin {
         inventory_team_name = config.getString("inventory.team.name");
         inventory_team_red = config.getString("inventory.team.red");
         inventory_team_blue = config.getString("inventory.team.blue");
+        inventory_team_random = config.getString("inventory.team.random");
 
         worldToClone = config.getString("worldToClone");
 
@@ -161,7 +167,7 @@ public class Main extends JavaPlugin {
         WorldManager.deleteAllWorld();
 
         for (int i = 0; i < gamesAtTheSameTime; i++) {
-            new GameManager(maxPlayers, minPlayers, points, countdown);
+            new GameManager(maxPlayersPerTeam, minPlayersToStart, points, countdown);
         }
 
 

@@ -49,14 +49,14 @@ public class Gui implements Listener {
                     case WAITING -> {
                         itemStack = new ItemStack(Material.GREEN_WOOL);
                         for (String string : Main.inventory_waiting) {
-                            String newString = string.replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers())).replaceAll("%status%", "Waiting").replaceAll("%players%", String.valueOf(gameManager.getPlayers().size()));
+                            String newString = string.replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)).replaceAll("%status%", "Waiting").replaceAll("%players%", String.valueOf(gameManager.getPlayers().size()));
                             lore.add(newString);
                         }
                     }
                     case STARTING -> {
                         itemStack = new ItemStack(Material.YELLOW_WOOL);
                         for (String string : Main.inventory_starting) {
-                            String newString = string.replaceAll("%players%", String.valueOf(gameManager.getPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers())).replaceAll("%status%", "Starting").replaceAll("%countdown%", String.valueOf(gameManager.getCountdown()));
+                            String newString = string.replaceAll("%players%", String.valueOf(gameManager.getPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)).replaceAll("%status%", "Starting").replaceAll("%countdown%", String.valueOf(gameManager.getCountdown()));
                             lore.add(newString);
                         }
                     }
@@ -65,7 +65,7 @@ public class Gui implements Listener {
 
 
                         for (String string : Main.inventory_ingame) {
-                            String newString = string.replaceAll("%players%", String.valueOf(gameManager.getPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers())).replaceAll("%status%", "Ingame").replaceAll("%red_points%", String.valueOf(gameManager.getRedPoints())).replaceAll("%blue_points%", String.valueOf(gameManager.getBluePoints())).replaceAll("%time%", Utils.getIntervalTime(gameManager.getTime()));
+                            String newString = string.replaceAll("%players%", String.valueOf(gameManager.getPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)).replaceAll("%status%", "Ingame").replaceAll("%red_points%", String.valueOf(gameManager.getRedPoints())).replaceAll("%blue_points%", String.valueOf(gameManager.getBluePoints())).replaceAll("%time%", Utils.getIntervalTime(gameManager.getTime()));
                             lore.add(newString);
                         }
                     }
@@ -104,7 +104,7 @@ public class Gui implements Listener {
         for (Player redPlayers : gameManager.getRedPlayers()) {
             redLore.add("- §c" + redPlayers.getName());
         }
-        for (int i = 0; i < (gameManager.getMaxPlayers() / 2) - gameManager.getRedPlayers().size() ; i++) {
+        for (int i = 0; i < (gameManager.getMaxPlayers()) - gameManager.getRedPlayers().size() ; i++) {
             redLore.add("-");
         }
         redMeta.setLore(redLore);
@@ -119,7 +119,7 @@ public class Gui implements Listener {
         for (Player bluePlayers : gameManager.getBluePlayers()) {
             blueLore.add("- §c" + bluePlayers.getName());
         }
-        for (int i = 0; i < (gameManager.getMaxPlayers() / 2) - gameManager.getBluePlayers().size() ; i++) {
+        for (int i = 0; i < (gameManager.getMaxPlayers()) - gameManager.getBluePlayers().size() ; i++) {
             blueLore.add("-");
         }
         blueMeta.setLore(blueLore);
@@ -127,6 +127,11 @@ public class Gui implements Listener {
         blue.setItemMeta(blueMeta);
         inventory.setItem(23, blue);
 
+        ItemStack random = new ItemStack(Material.WHITE_BANNER);
+        ItemMeta randomMeta = random.getItemMeta();
+        randomMeta.setDisplayName(Main.inventory_team_random);
+        random.setItemMeta(randomMeta);
+        inventory.setItem(22, random);
     }
 
 
@@ -143,9 +148,9 @@ public class Gui implements Listener {
 
                     GameManager game = GameManager.getGameById(Integer.parseInt(id));
 
-                    if (game.getPlayers().size() < Main.maxPlayers) {
+                    if (game.getPlayers().size() < Main.maxPlayersPerTeam * 2) {
                         for (Player players : game.getPlayers()) {
-                            players.sendMessage(Main.getInstance().getConfig().getString("message.join_message").replaceAll("%player%", player.getName()).replaceAll("%players%", String.valueOf(game.getPlayers().size())).replaceAll("%max_players%", String.valueOf(game.getMaxPlayers())));
+                            players.sendMessage(Main.getInstance().getConfig().getString("message.join_message").replaceAll("%player%", player.getName()).replaceAll("%players%", String.valueOf(game.getPlayers().size() + 1)).replaceAll("%max_players%", String.valueOf(game.getMaxPlayers() * 2)));
                         }
 
                         game.addPlayer(player);
@@ -163,10 +168,58 @@ public class Gui implements Listener {
                 }
             }
         } else if (event.getView().getTitle().equalsIgnoreCase(Main.inventory_team_name)) {
+            event.setCancelled(true);
 
             if (slot == 21 || slot == 23) {
-                event.setCancelled(true);
+                GameManager game = GameManager.getGameByPlayer(player);
 
+                if (slot == 21) {
+                    if (game.getBluePlayers().contains(player)) {
+                        if (game.getRedPlayers().size() < Main.maxPlayersPerTeam) {
+                            game.getBluePlayers().remove(player);
+                            game.getRedPlayers().add(player);
+                            player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_red"));
+
+                        } else {
+                            player.sendMessage(Main.getInstance().getConfig().getString("message.team_full"));
+                        }
+                    } else {
+                        if (game.getRedPlayers().size() < Main.maxPlayersPerTeam) {
+                            game.getRedPlayers().add(player);
+                            player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_red"));
+                        }
+                        else {
+                            player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_full"));
+                        }
+                    }
+
+                }
+                if (slot == 23) {
+                    if (game.getRedPlayers().contains(player)) {
+                        if (game.getBluePlayers().size() < Main.maxPlayersPerTeam) {
+                            game.getRedPlayers().remove(player);
+                            game.getBluePlayers().add(player);
+                            player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_blue"));
+
+                        } else {
+                            player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_full"));
+                        }
+                    }
+                    else {
+                        if (game.getBluePlayers().size() < Main.maxPlayersPerTeam) {
+                            game.getBluePlayers().add(player);
+                            player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_blue").replaceAll("%team%", "blue"));
+                        }
+                        else {
+                            player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_full"));
+                        }
+                    }
+                }
+
+                GameManager.waitingInventory(player);
+
+            }
+            if (slot == 22) {
                 GameManager game = GameManager.getGameByPlayer(player);
 
                 if (game.getRedPlayers().contains(player)) {
@@ -174,13 +227,8 @@ public class Gui implements Listener {
                 } else if (game.getBluePlayers().contains(player)) {
                     game.removeBluePlayer(player);
                 }
-
-                if (slot == 21) {
-                    game.addRedPlayer(player);
-                } else {
-                    game.addBluePlayer(player);
-                }
-
+                player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_random"));
+                GameManager.waitingInventory(player);
             }
         }
     }
