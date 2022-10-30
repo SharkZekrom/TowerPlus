@@ -295,8 +295,14 @@ public class GameManager {
                                             }
 
                                         }
+                                        int count = 0;
+                                        for (GameManager games : games) {
+                                            if (games.getGameStatus() == GameStatus.WAITING) {
+                                                count++;
+                                            }
+                                        }
 
-                                        if (GameManager.games.size() - 1 < Main.gamesAtTheSameTime) {
+                                        if (count < Main.gamesAtTheSameTime) {
                                             new GameManager(Main.maxPlayers, Main.minPlayers, Main.points, Main.countdown);
                                         }
                                         this.cancel();
