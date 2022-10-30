@@ -3,7 +3,7 @@ version: 1.0.0
 main: be.shark_zekrom.Main
 api-version: 1.13
 author: shark_zekrom
-softdepend: ['Multiverse-Core']
+softdepend: [Multiverse-Core,HolographicDisplays]
 load: POSTWORLD
 commands:
     tower+:

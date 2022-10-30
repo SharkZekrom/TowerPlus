@@ -31,5 +31,15 @@
       <option name="name" value="maven" />
       <option name="url" value="https://repo.onarandombox.com/content/groups/public/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven2" />
+      <option name="name" value="maven2" />
+      <option name="url" value="https://novaguilds.pl/repo/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven2" />
+      <option name="name" value="maven2" />
+      <option name="url" value="https://repo.codemc.io/repository/maven-public/" />
+    </remote-repository>
   </component>
 </project>

@@ -4,6 +4,8 @@ import be.shark_zekrom.database.Database;
 import be.shark_zekrom.database.SQLite;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import fr.mrmicky.fastboard.FastBoard;
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -32,9 +34,7 @@ public class Main extends JavaPlugin {
 
     public static Database db;
 
-    public Database getRDatabase() {
-        return db;
-    }
+    private boolean useHolographicDisplays;
 
     @Override
     public void onEnable() {
@@ -45,6 +45,9 @@ public class Main extends JavaPlugin {
 
         core = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
 
+        HolographicDisplaysAPI api = HolographicDisplaysAPI.get(this);
+
+        Leaderboard.initialize(api);
        // if (core == null) {
          //   Bukkit.getLogger().severe("Multiverse-Core not found! Disabling plugin...");
         //}
@@ -185,6 +188,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        Leaderboard.removeHolograms();
         for (GameManager gameManager : GameManager.games) {
             for (Player player : gameManager.players) {
                 player.teleport(Main.lobby);

@@ -18,6 +18,7 @@ repositories {
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
     maven { url = "https://repo.onarandombox.com/content/groups/public/" }
+    maven { url = "https://repo.codemc.io/repository/maven-public/" }
 
 }
 
@@ -25,10 +26,12 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.13-R0.1-SNAPSHOT'
     compileOnly 'com.onarandombox.multiversecore:Multiverse-Core:4.3.1'
     implementation 'fr.mrmicky:fastboard:1.2.1'
+    compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9'
+    compileOnly fileTree(dir: 'C:\\Users\\luca-\\IdeaProjects\\TowerPlus\\libs', include: ['*.jar'])
 
 }
-
 shadowJar {
     relocate 'fr.mrmicky.fastboard', 'be.shark_zekrom.fastboard'
 }
+
 compileJava.options.encoding = 'UTF-8'
