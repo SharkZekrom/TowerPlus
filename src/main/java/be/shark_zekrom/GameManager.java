@@ -31,7 +31,10 @@ public class GameManager {
 
     public void addBluePoints(Player player) {
         bluePoints++;
-        Bukkit.broadcastMessage("Blue team has scored a point! (" + bluePoints + ")");
+        for (Player players : this.getPlayers()) {
+            players.getPlayer().sendMessage("Blue team has scored a point! (" + bluePoints + ")");
+        }
+
         player.teleport(new Location(player.getWorld(), 0, -42, 0));
         if (bluePoints == Main.points) {
             this.setGameStatus(GameStatus.ENDING);
@@ -51,7 +54,9 @@ public class GameManager {
 
     public void addRedPoints(Player player) {
         redPoints++;
-        Bukkit.broadcastMessage("Red team has scored a point! (" + redPoints + ")");
+        for (Player players : this.getPlayers()) {
+            players.getPlayer().sendMessage("Red team has scored a point! (" + redPoints + ")");
+        }
         player.teleport(new Location(player.getWorld(), 0, -42, 0));
         if (redPoints == Main.points) {
             this.setGameStatus(GameStatus.ENDING);
@@ -139,7 +144,7 @@ public class GameManager {
         bluePlayers.add(player);
     }
 
-    public void removebluePlayer(Player player) {
+    public void removeBluePlayer(Player player) {
         bluePlayers.remove(player);
     }
 
@@ -371,10 +376,7 @@ public class GameManager {
 
     public static void waitingInventory(Player player) {
         player.getInventory().clear();
-        player.getInventory().setItem(3, new ItemStack(Material.BLUE_BANNER));
-        player.getInventory().setItem(4, new ItemStack(Material.STONE));
-        player.getInventory().setItem(5, new ItemStack(Material.RED_BANNER));
-
+        player.getInventory().setItem(4, new ItemStack(Material.WHITE_BANNER));
         player.getInventory().setItem(8, new ItemStack(Material.BARRIER));
 
     }

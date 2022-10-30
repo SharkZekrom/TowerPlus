@@ -24,7 +24,7 @@ public class Main extends JavaPlugin {
     public static MultiverseCore core;
 
     public static Integer id = 1, maxPlayers, minPlayers, points, countdown, gamesAtTheSameTime;
-    public static String worldToClone, worldPrefix, inventory_name, inventory_game_name;
+    public static String worldToClone, worldPrefix, inventory_game_name, inventory_game_id, inventory_team_name, inventory_team_red, inventory_team_blue;
     public static Location lobby;
     public static ArrayList<String> inventory_waiting, inventory_starting, inventory_ingame, scoreboard_waiting, scoreboard_starting, scoreboard_ingame, scoreboard_ending;
 
@@ -107,8 +107,11 @@ public class Main extends JavaPlugin {
         config.addDefault("inventory.waiting", Arrays.asList("","§6Status §7» %status%", "§6Players §7» %players%", "§6Max players §7» %max_players%","","§eClick to join"));
         config.addDefault("inventory.starting", Arrays.asList("","§6Status §7» %status%", "§6Players §7» %players%", "§6Max players §7» %max_players%", "", "§eStarting in %countdown%","","§eClick to join"));
         config.addDefault("inventory.ingame", Arrays.asList("","§6Status §7» %status%", "§6Players §7» %players%", "", "§6Red team §7» %red_points%", "§6Blue team » %blue_points%","§6Time §7» §e%time%","","§6Click to join in spectator"));
-        config.addDefault("inventory.name", "TowerPlus");
-        config.addDefault("inventory.game_name", "§eGame %id%");
+        config.addDefault("inventory.game.name", "TowerPlus");
+        config.addDefault("inventory.game_id", "§eGame %id%");
+        config.addDefault("inventory.team.name", "Teams");
+        config.addDefault("inventory.team.red", "Red");
+        config.addDefault("inventory.team.blue", "Blue");
 
         config.addDefault("scoreboard.title", "TowerPlus");
         config.addDefault("scoreboard.waiting", Arrays.asList("Waiting for players","ID > TowerPlus-%id%","players: %players%/%max_players%"));
@@ -119,8 +122,11 @@ public class Main extends JavaPlugin {
         config.addDefault("message.leave_message", "§a%player% §7leave the game %players%/%max_players%");
         config.addDefault("message.join_message", "§a%player% §7join the game %players%/%max_players%");
         config.addDefault("message.start_message", "§aThe game start in %countdown%");
+        config.addDefault("message.full_game", "§cThe game is full");
         config.addDefault("message.more_players", "§cNot enough players to start the game");
-
+        config.addDefault("message.kill_message", "§a%player% §7kill §a%killed%");
+        config.addDefault("message.death_void_message", "§a%player% §7fall in the void");
+        config.addDefault("message.death_fall_message", "§a%player% §7fall");
 
         config.options().copyDefaults(true);
         saveConfig();
@@ -132,8 +138,11 @@ public class Main extends JavaPlugin {
         points = config.getInt("pointsToWin");
         gamesAtTheSameTime = config.getInt("gamesAtTheSameTime");
         worldPrefix = config.getString("worldPrefix");
-        inventory_name = config.getString("inventory.name");
-        inventory_game_name = config.getString("inventory.game_name");
+        inventory_game_name = config.getString("inventory.game.name");
+        inventory_game_id = config.getString("inventory.game_id");
+        inventory_team_name = config.getString("inventory.team.name");
+        inventory_team_red = config.getString("inventory.team.red");
+        inventory_team_blue = config.getString("inventory.team.blue");
 
         worldToClone = config.getString("worldToClone");
 

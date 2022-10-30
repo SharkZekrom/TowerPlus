@@ -28,7 +28,7 @@ public class Gui implements Listener {
         Inventory inventory;
 
         if (player.getOpenInventory().getTopInventory().getType() == InventoryType.CRAFTING) {
-            inventory = Bukkit.createInventory(null, 54, Main.inventory_name);
+            inventory = Bukkit.createInventory(null, 54, Main.inventory_game_name);
             player.openInventory(inventory);
 
         } else {
@@ -72,7 +72,7 @@ public class Gui implements Listener {
                 }
                 ItemMeta itemMeta = itemStack.getItemMeta();
                 itemMeta.setLore(lore);
-                itemMeta.setDisplayName(Main.inventory_game_name.replaceAll("%id%", String.valueOf(gameManager.getGameId())));
+                itemMeta.setDisplayName(Main.inventory_game_id.replaceAll("%id%", String.valueOf(gameManager.getGameId())));
 
                 itemStack.setItemMeta(itemMeta);
 
@@ -81,12 +81,60 @@ public class Gui implements Listener {
         }
     }
 
+    public static void teams(Player player) {
+
+        Inventory inventory;
+
+        if (player.getOpenInventory().getTopInventory().getType() == InventoryType.CRAFTING) {
+            inventory = Bukkit.createInventory(null, 54, Main.inventory_team_name);
+            player.openInventory(inventory);
+
+        } else {
+
+            player.getOpenInventory().getTopInventory().clear();
+            inventory = player.getOpenInventory().getTopInventory();
+        }
+
+        GameManager gameManager = GameManager.getGameByPlayer(player);
+
+        ItemStack red = new ItemStack(Material.RED_BANNER);
+        ItemMeta redMeta = red.getItemMeta();
+        redMeta.setDisplayName(Main.inventory_team_red);
+        ArrayList<String> redLore = new ArrayList<>();
+        for (Player redPlayers : gameManager.getRedPlayers()) {
+            redLore.add("- §c" + redPlayers.getName());
+        }
+        for (int i = 0; i < (gameManager.getMaxPlayers() / 2) - gameManager.getRedPlayers().size() ; i++) {
+            redLore.add("-");
+        }
+        redMeta.setLore(redLore);
+
+        red.setItemMeta(redMeta);
+        inventory.setItem(21, red);
+
+        ItemStack blue = new ItemStack(Material.BLUE_BANNER);
+        ItemMeta blueMeta = blue.getItemMeta();
+        blueMeta.setDisplayName(Main.inventory_team_blue);
+        ArrayList<String> blueLore = new ArrayList<>();
+        for (Player bluePlayers : gameManager.getBluePlayers()) {
+            blueLore.add("- §c" + bluePlayers.getName());
+        }
+        for (int i = 0; i < (gameManager.getMaxPlayers() / 2) - gameManager.getBluePlayers().size() ; i++) {
+            blueLore.add("-");
+        }
+        blueMeta.setLore(blueLore);
+
+        blue.setItemMeta(blueMeta);
+        inventory.setItem(23, blue);
+
+    }
+
 
     @EventHandler
     private void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         int slot = event.getSlot();
-        if (event.getView().getTitle().equalsIgnoreCase(Main.inventory_name)) {
+        if (event.getView().getTitle().equalsIgnoreCase(Main.inventory_game_name)) {
             event.setCancelled(true);
 
             if (event.getInventory().getItem(slot) != null) {
@@ -97,7 +145,6 @@ public class Gui implements Listener {
 
                     if (game.getPlayers().size() < Main.maxPlayers) {
                         for (Player players : game.getPlayers()) {
-                            players.sendMessage("§a" + player.getName() + " §7has joined the game " + game.getPlayers().size() + "/10");
                             players.sendMessage(Main.getInstance().getConfig().getString("message.join_message").replaceAll("%player%", player.getName()).replaceAll("%players%", String.valueOf(game.getPlayers().size())).replaceAll("%max_players%", String.valueOf(game.getMaxPlayers())));
                         }
 
@@ -111,9 +158,29 @@ public class Gui implements Listener {
 
 
                     } else {
-                        player.sendMessage("§cThis game is full");
+                        player.sendMessage(Main.getInstance().getConfig().getString("message.full_game"));
                     }
                 }
+            }
+        } else if (event.getView().getTitle().equalsIgnoreCase(Main.inventory_team_name)) {
+
+            if (slot == 21 || slot == 23) {
+                event.setCancelled(true);
+
+                GameManager game = GameManager.getGameByPlayer(player);
+
+                if (game.getRedPlayers().contains(player)) {
+                    game.removeRedPlayer(player);
+                } else if (game.getBluePlayers().contains(player)) {
+                    game.removeBluePlayer(player);
+                }
+
+                if (slot == 21) {
+                    game.addRedPlayer(player);
+                } else {
+                    game.addBluePlayer(player);
+                }
+
             }
         }
     }
