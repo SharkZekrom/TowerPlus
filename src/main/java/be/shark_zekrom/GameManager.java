@@ -274,7 +274,7 @@ public class GameManager {
                         gameManager.setGameStatus(GameStatus.STARTING);
                         gameManager.setCountdown(Main.countdown);
 
-                        new BukkitRunnable() {
+                        BukkitTask task = new BukkitRunnable() {
                             @Override
                             public void run() {
                                 if (gameManager.getPlayers().size() >= gameManager.getMinPlayers()) {
@@ -308,6 +308,8 @@ public class GameManager {
                                         if (count < Main.gamesAtTheSameTime) {
                                             new GameManager(Main.maxPlayersPerTeam, Main.minPlayersToStart, Main.points, Main.countdown);
                                         }
+                                        tasks.remove(gameManager);
+
                                         this.cancel();
                                     }
                                 } else {
@@ -321,7 +323,7 @@ public class GameManager {
                                 gameManager.setCountdown(gameManager.getCountdown() - 1);
                             }
                         }.runTaskTimer(Main.getInstance(), 0, 20);
-
+                        tasks.put(gameManager, task);
                     }
                 }
             }
@@ -330,8 +332,7 @@ public class GameManager {
 
 
     }
-
-
+    static HashMap<GameManager, BukkitTask> tasks = new HashMap<>();
     public static GameManager getGameById(int id) {
         for (GameManager game : GameManager.games) {
             if (game.getGameId() == id) {
@@ -451,6 +452,8 @@ public class GameManager {
 
         gameManager.setGameStatus(GameManager.GameStatus.INGAME);
         gameManager.setTime(System.currentTimeMillis());
+
+        tasks.get(gameManager).cancel();
 
         for (Player players : gameManager.getPlayers()) {
             players.getInventory().clear();
