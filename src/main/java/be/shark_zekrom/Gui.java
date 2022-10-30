@@ -184,12 +184,13 @@ public class Gui implements Listener {
                             player.sendMessage(Main.getInstance().getConfig().getString("message.team_full"));
                         }
                     } else {
-                        if (game.getRedPlayers().size() < Main.maxPlayersPerTeam) {
-                            game.getRedPlayers().add(player);
-                            player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_red"));
-                        }
-                        else {
-                            player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_full"));
+                        if (!game.getRedPlayers().contains(player)) {
+                            if (game.getRedPlayers().size() < Main.maxPlayersPerTeam) {
+                                game.getRedPlayers().add(player);
+                                player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_red"));
+                            } else {
+                                player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_full"));
+                            }
                         }
                     }
 
@@ -204,14 +205,14 @@ public class Gui implements Listener {
                         } else {
                             player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_full"));
                         }
-                    }
-                    else {
-                        if (game.getBluePlayers().size() < Main.maxPlayersPerTeam) {
-                            game.getBluePlayers().add(player);
-                            player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_blue").replaceAll("%team%", "blue"));
-                        }
-                        else {
-                            player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_full"));
+                    } else {
+                        if (!game.getBluePlayers().contains(player)) {
+                            if (game.getBluePlayers().size() < Main.maxPlayersPerTeam) {
+                                game.getBluePlayers().add(player);
+                                player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_blue").replaceAll("%team%", "blue"));
+                            } else {
+                                player.sendMessage(Main.getInstance().getConfig().getString("message.team_change_full"));
+                            }
                         }
                     }
                 }
