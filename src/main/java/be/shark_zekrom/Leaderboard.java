@@ -23,12 +23,8 @@ public class Leaderboard {
 
     public static ArrayList<Hologram> holograms = new ArrayList<>();
 
-    public static void initialize(HolographicDisplaysAPI api) {
-        leaderboard(api);
-    }
-
-    public static void leaderboard(HolographicDisplaysAPI api) {
-        Hologram hologram = api.createHologram(new Location(Bukkit.getWorld("world"), 0, -58, 0));
+    public static void leaderboard(HolographicDisplaysAPI api, Location location) {
+        Hologram hologram = api.createHologram(location);
         holograms.add(hologram);
 
 

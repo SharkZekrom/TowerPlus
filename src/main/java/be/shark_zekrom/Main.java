@@ -40,15 +40,14 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
         PluginManager pm = getServer().getPluginManager();
+        HolographicDisplaysAPI api = HolographicDisplaysAPI.get(this);
+
         db = new SQLite(this);
         db.load();
 
         core = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
 
-        HolographicDisplaysAPI api = HolographicDisplaysAPI.get(this);
-
-        Leaderboard.initialize(api);
-       // if (core == null) {
+        // if (core == null) {
          //   Bukkit.getLogger().severe("Multiverse-Core not found! Disabling plugin...");
         //}
         this.getCommand("tower+").setExecutor(new Commands());
@@ -140,6 +139,10 @@ public class Main extends JavaPlugin {
         config.addDefault("leaderboard.game_played",Arrays.asList("Leaderboard","game_played","","1. %1%","1. %2%","1. %3%","1. %4%","1. %5%"));
         config.addDefault("leaderboard.game_won",Arrays.asList("Leaderboard","game_won","","1. %1%","1. %2%","1. %3%","1. %4%","1. %5%"));
         config.addDefault("leaderboard.points_scored",Arrays.asList("Leaderboard","points_scored","","1. %1%","1. %2%","1. %3%","1. %4%","1. %5%"));
+        config.addDefault("leaderboard.location.world", "world");
+        config.addDefault("leaderboard.location.x", 0);
+        config.addDefault("leaderboard.location.y", 0);
+        config.addDefault("leaderboard.location.z", 0);
 
 
         config.addDefault("message.leave_message", "§a%player% §7leave the game %players%/%max_players%");
@@ -181,6 +184,7 @@ public class Main extends JavaPlugin {
         scoreboard_ingame = (ArrayList<String>) config.getStringList("scoreboard.ingame");
         scoreboard_ending = (ArrayList<String>) config.getStringList("scoreboard.endgame");
 
+        Leaderboard.leaderboard(api, new Location(Bukkit.getWorld(config.getString("leaderboard.location.world")), config.getDouble("leaderboard.location.x"),config.getDouble("leaderboard.location.y"),config.getDouble("leaderboard.location.z")));
 
         WorldManager.deleteAllWorld();
 
