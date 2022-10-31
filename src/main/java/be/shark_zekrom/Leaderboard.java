@@ -1,11 +1,10 @@
 package be.shark_zekrom;
 
 import be.shark_zekrom.database.Errors;
+import eu.decentsoftware.holograms.api.DHAPI;
+import eu.decentsoftware.holograms.api.DecentHolograms;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
-import me.filoghost.holographicdisplays.api.hologram.line.HologramLine;
-import me.filoghost.holographicdisplays.api.hologram.line.TextHologramLine;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -14,18 +13,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.UUID;
 import java.util.logging.Level;
 
 public class Leaderboard {
 
-    public static ArrayList<Hologram> holograms = new ArrayList<>();
+    public static ArrayList<Hologram> hologramsHolographicDisplaysAPI = new ArrayList<>();
+    public static ArrayList<eu.decentsoftware.holograms.api.holograms.Hologram> hologramsDecentHolograms = new ArrayList<>();
 
-    public static void leaderboard(HolographicDisplaysAPI api, Location location) {
+    public static void leaderboardHolographicDisplaysAPI(HolographicDisplaysAPI api, Location location) {
         Hologram hologram = api.createHologram(location);
-        holograms.add(hologram);
+        hologramsHolographicDisplaysAPI.add(hologram);
 
         new BukkitRunnable() {
             @Override
@@ -35,7 +32,7 @@ public class Leaderboard {
                     public void run() {
 
                         ArrayList<String[]> data = getData("game_played",5);
-                        leaderboardUpdate(data,Main.leaderboard_game_played,"game_played", hologram);
+                        leaderboardUpdateHolographicDisplaysAPI(data,Main.leaderboard_game_played, hologram);
                     }
                 }.runTaskLater(Main.getInstance(), 0);
 
@@ -43,7 +40,7 @@ public class Leaderboard {
                     @Override
                     public void run() {
                         ArrayList<String[]> data = getData("game_won",5);
-                        leaderboardUpdate(data,Main.leaderboard_game_won,"game_won", hologram);
+                        leaderboardUpdateHolographicDisplaysAPI(data,Main.leaderboard_game_won, hologram);
                     }
                 }.runTaskLater(Main.getInstance(), 20);
 
@@ -53,34 +50,115 @@ public class Leaderboard {
                     public void run() {
 
                         ArrayList<String[]> data = getData("points_scored",5);
-                        leaderboardUpdate(data,Main.leaderboard_points_scored,"points_scored", hologram);
+                        leaderboardUpdateHolographicDisplaysAPI(data,Main.leaderboard_points_scored, hologram);
                     }
                 }.runTaskLater(Main.getInstance(), 40);
 
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+
+                        ArrayList<String[]> data = getData("kills",5);
+                        leaderboardUpdateHolographicDisplaysAPI(data,Main.leaderboard_kills, hologram);
+                    }
+                }.runTaskLater(Main.getInstance(), 60);
+
             }
 
-        }.runTaskTimer(Main.getInstance(), 0, 60);
+        }.runTaskTimer(Main.getInstance(), 0, 80);
     }
 
-    private static void leaderboardUpdate(ArrayList<String[]> data,ArrayList<String> config, String table, Hologram hologram) {
+
+    public static void leaderboardDecentHolograms(Location location) {
+        eu.decentsoftware.holograms.api.holograms.Hologram hologram = DHAPI.createHologram("TowerPlusLeaderboard", location);
+        hologramsDecentHolograms.add(hologram);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+
+                        ArrayList<String[]> data = getData("game_played",5);
+                        leaderboardUpdateDecentHolograms(data,Main.leaderboard_game_played, hologram);
+                    }
+                }.runTaskLater(Main.getInstance(), 0);
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        ArrayList<String[]> data = getData("game_won",5);
+                        leaderboardUpdateDecentHolograms(data,Main.leaderboard_game_won, hologram);
+                    }
+                }.runTaskLater(Main.getInstance(), 20);
+
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+
+                        ArrayList<String[]> data = getData("points_scored",5);
+                        leaderboardUpdateDecentHolograms(data,Main.leaderboard_points_scored, hologram);
+                    }
+                }.runTaskLater(Main.getInstance(), 40);
+
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+
+                        ArrayList<String[]> data = getData("kills",5);
+                        leaderboardUpdateDecentHolograms(data,Main.leaderboard_kills, hologram);
+                    }
+                }.runTaskLater(Main.getInstance(), 60);
+
+            }
+
+        }.runTaskTimer(Main.getInstance(), 0, 80);
+    }
+
+
+
+
+    private static void leaderboardUpdateHolographicDisplaysAPI(ArrayList<String[]> data,ArrayList<String> config, Hologram hologram) {
         hologram.getLines().clear();
 
         int index = 0;
 
-        for (int i = 0; i < config.size(); i++) {
-            String line = config.get(i);
+        for (String line : config) {
             if (line.contains("%player%")) {
                 if (data.size() > index) {
                     String[] playerData = data.get(index);
                     line = line.replaceAll("%player%", playerData[0]);
                     line = line.replaceAll("%value%", playerData[1]);
                 } else {
-                    line = line.replaceAll("%player%", "No data");
-                    line = line.replaceAll("%value%", "No data");
+                    line = line.replaceAll("%player%", Main.leaderboard_noData);
+                    line = line.replaceAll("%value%", Main.leaderboard_noData);
                 }
                 index++;
             }
             hologram.getLines().appendText(line);
+        }
+    }
+
+    private static void leaderboardUpdateDecentHolograms(ArrayList<String[]> data,ArrayList<String> config, eu.decentsoftware.holograms.api.holograms.Hologram hologram) {
+        DHAPI.getHologram(hologram.getName()).getPages().clear();
+
+        int index = 0;
+
+        for (String line : config) {
+            if (line.contains("%player%")) {
+                if (data.size() > index) {
+                    String[] playerData = data.get(index);
+                    line = line.replaceAll("%player%", playerData[0]);
+                    line = line.replaceAll("%value%", playerData[1]);
+                } else {
+                    line = line.replaceAll("%player%", Main.leaderboard_noData);
+                    line = line.replaceAll("%value%", Main.leaderboard_noData);
+                }
+                index++;
+            }
+            DHAPI.addHologramLine(hologram, line);
         }
     }
 
@@ -117,9 +195,10 @@ public class Leaderboard {
 
 
     public static void removeHolograms() {
-        for (Hologram hologram : holograms) {
+        for (Hologram hologram : hologramsHolographicDisplaysAPI) {
             hologram.delete();
         }
+        DHAPI.getHologram("TowerPlusLeaderboard").delete();
     }
 
 

@@ -3,9 +3,13 @@ package be.shark_zekrom;
 import be.shark_zekrom.database.Database;
 import be.shark_zekrom.database.SQLite;
 import com.onarandombox.MultiverseCore.MultiverseCore;
+import eu.decentsoftware.holograms.api.DHAPI;
+import eu.decentsoftware.holograms.api.DecentHolograms;
+import eu.decentsoftware.holograms.api.DecentHologramsAPI;
+import eu.decentsoftware.holograms.api.holograms.Hologram;
 import fr.mrmicky.fastboard.FastBoard;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.plugin.HolographicDisplays;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -25,27 +29,29 @@ public class Main extends JavaPlugin {
         return instance;
     }
 
-    public static MultiverseCore core;
+    public static MultiverseCore multiverseCore;
+    public static Hologram decentHolograms;
+    public static HolographicDisplays holographicDisplaysAPI;
+
 
     public static Integer id = 1, maxPlayersPerTeam, minPlayersToStart, points, countdown, gamesAtTheSameTime;
-    public static String worldToClone, worldPrefix, inventory_game_name, inventory_game_id, inventory_team_name, inventory_team_red, inventory_team_blue, inventory_team_random;
+    public static String worldToClone, worldPrefix, inventory_game_name, inventory_game_id, inventory_team_name, inventory_team_red, inventory_team_blue, inventory_team_random, leaderboard_noData;
     public static Location lobby;
-    public static ArrayList<String> inventory_waiting, inventory_starting, inventory_ingame, scoreboard_waiting, scoreboard_starting, scoreboard_ingame, scoreboard_ending, leaderboard_game_played, leaderboard_game_won, leaderboard_points_scored;
+    public static ArrayList<String> inventory_waiting, inventory_starting, inventory_ingame, scoreboard_waiting, scoreboard_starting, scoreboard_ingame, scoreboard_ending, leaderboard_game_played, leaderboard_game_won, leaderboard_points_scored, leaderboard_kills;
 
     public static Database db;
-
-    private boolean useHolographicDisplays;
 
     @Override
     public void onEnable() {
         instance = this;
         PluginManager pm = getServer().getPluginManager();
-        HolographicDisplaysAPI api = HolographicDisplaysAPI.get(this);
 
         db = new SQLite(this);
         db.load();
 
-        core = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
+        multiverseCore = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
+       // decentHolograms = (Hologram) Bukkit.getServer().getPluginManager().getPlugin("DecentHolograms");
+        holographicDisplaysAPI = (HolographicDisplays) Bukkit.getServer().getPluginManager().getPlugin("HolographicDisplays");
 
         // if (core == null) {
          //   Bukkit.getLogger().severe("Multiverse-Core not found! Disabling plugin...");
@@ -116,8 +122,8 @@ public class Main extends JavaPlugin {
         config.addDefault("location.spectator.yaw", 0);
         config.addDefault("location.spectator.pitch", 0);
 
-        config.addDefault("inventory.waiting", Arrays.asList("","§6Status §7» %status%", "§6Players §7» %players%", "§6Max players §7» %max_players%","","§eClick to join"));
-        config.addDefault("inventory.starting", Arrays.asList("","§6Status §7» %status%", "§6Players §7» %players%", "§6Max players §7» %max_players%", "", "§eStarting in %countdown%","","§eClick to join"));
+        config.addDefault("inventory.waiting", Arrays.asList("","§6Status §7» %status%", "§6Players §7» %players%/%max_players%","","§eClick to join"));
+        config.addDefault("inventory.starting", Arrays.asList("","§6Status §7» %status%", "§6Players §7» %players%/%max_players%", "", "§eStarting in %countdown%","","§eClick to join"));
         config.addDefault("inventory.ingame", Arrays.asList("","§6Status §7» %status%", "§6Players §7» %players%", "", "§6Red team §7» %red_points%", "§6Blue team » %blue_points%","§6Time §7» §e%time%","","§6Click to join in spectator"));
         config.addDefault("inventory.game.name", "TowerPlus");
         config.addDefault("inventory.game_id", "§eGame %id%");
@@ -131,14 +137,16 @@ public class Main extends JavaPlugin {
         config.addDefault("message.team_change_full","§cThis team is full!");
 
         config.addDefault("scoreboard.title", "TowerPlus");
-        config.addDefault("scoreboard.waiting", Arrays.asList("Waiting for players","ID > TowerPlus-%id%","players: %players%/%max_players%"));
-        config.addDefault("scoreboard.starting", Arrays.asList("Starting in %countdown%","ID > TowerPlus-%id%", "players: %players%/%max_players%"));
-        config.addDefault("scoreboard.ingame", Arrays.asList("Red points: %red_points%", "Blue points: %blue_points%","players: %players%", "Time: %time%"));
+        config.addDefault("scoreboard.waiting", Arrays.asList("Waiting for players","ID » TowerPlus-%id%","players » %players%/%max_players%"));
+        config.addDefault("scoreboard.starting", Arrays.asList("Starting in %countdown%","ID » TowerPlus-%id%", "players » %players%/%max_players%"));
+        config.addDefault("scoreboard.ingame", Arrays.asList("Red points » %red_points%", "Blue points » %blue_points%","players » %players%", "Time » %time%"));
         config.addDefault("scoreboard.endgame", Arrays.asList("","Finish",""));
 
         config.addDefault("leaderboard.game_played",Arrays.asList("Leaderboard","game_played","","1. %player% %value%","2. %player% %value%","3. %player% %value%","4. %player% %value%","5. %player% %value%"));
         config.addDefault("leaderboard.game_won",Arrays.asList("Leaderboard","game_won","","1. %player% %value%","2. %player% %value%","3. %player% %value%","4. %player% %value%","5. %player% %value%"));
         config.addDefault("leaderboard.points_scored",Arrays.asList("Leaderboard","points_scored","","1. %player% %value%","2. %player% %value%","3. %player% %value%","4. %player% %value%","5. %player% %value%"));
+        config.addDefault("leaderboard.kills",Arrays.asList("Leaderboard","kills","","1. %player% %value%","2. %player% %value%","3. %player% %value%","4. %player% %value%","5. %player% %value%"));
+        config.addDefault("leaderboard.noData", "No data");
         config.addDefault("leaderboard.location.world", "world");
         config.addDefault("leaderboard.location.x", 0);
         config.addDefault("leaderboard.location.y", 0);
@@ -170,6 +178,7 @@ public class Main extends JavaPlugin {
         inventory_team_red = config.getString("inventory.team.red");
         inventory_team_blue = config.getString("inventory.team.blue");
         inventory_team_random = config.getString("inventory.team.random");
+        leaderboard_noData = config.getString("leaderboard.noData");
 
         worldToClone = config.getString("worldToClone");
 
@@ -187,14 +196,22 @@ public class Main extends JavaPlugin {
         leaderboard_game_played = (ArrayList<String>) config.getStringList("leaderboard.game_played");
         leaderboard_game_won = (ArrayList<String>) config.getStringList("leaderboard.game_won");
         leaderboard_points_scored = (ArrayList<String>) config.getStringList("leaderboard.points_scored");
-
-        Leaderboard.leaderboard(api, new Location(Bukkit.getWorld(config.getString("leaderboard.location.world")), config.getDouble("leaderboard.location.x"),config.getDouble("leaderboard.location.y"),config.getDouble("leaderboard.location.z")));
+        leaderboard_kills = (ArrayList<String>) config.getStringList("leaderboard.kills");
 
         WorldManager.deleteAllWorld();
 
         for (int i = 0; i < gamesAtTheSameTime; i++) {
             new GameManager(maxPlayersPerTeam, minPlayersToStart, points, countdown);
         }
+
+        if (holographicDisplaysAPI != null) {
+            HolographicDisplaysAPI api = HolographicDisplaysAPI.get(this);
+            Leaderboard.leaderboardHolographicDisplaysAPI(api, new Location(Bukkit.getWorld(config.getString("leaderboard.location.world")), config.getDouble("leaderboard.location.x"),config.getDouble("leaderboard.location.y"),config.getDouble("leaderboard.location.z")));
+        } else if (decentHolograms != null) {
+           Leaderboard.leaderboardDecentHolograms(new Location(Bukkit.getWorld(config.getString("leaderboard.location.world")), config.getDouble("leaderboard.location.x"),config.getDouble("leaderboard.location.y"),config.getDouble("leaderboard.location.z")));
+
+        }
+
 
 
     }

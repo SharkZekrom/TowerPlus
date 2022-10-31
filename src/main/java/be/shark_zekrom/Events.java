@@ -84,6 +84,11 @@ public class Events implements Listener {
         } else {
             Main.db.initializeAccount(event.getPlayer(), "points_scored");
         }
+        if (Main.db.hasAccount(String.valueOf(event.getPlayer().getUniqueId()), "kills")) {
+            Main.db.getAccountName(event.getPlayer(), "kills");
+        } else {
+            Main.db.initializeAccount(event.getPlayer(), "kills");
+        }
     }
 
     @EventHandler

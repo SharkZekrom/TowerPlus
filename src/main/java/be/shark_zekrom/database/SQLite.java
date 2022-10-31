@@ -37,6 +37,13 @@ public class SQLite extends Database{
             "PRIMARY KEY (`uuid`)" +
             ");";
 
+    public String kills = "CREATE TABLE IF NOT EXISTS kills (" +
+            "`uuid` varchar(32) NOT NULL," +
+            "`name` varchar(100) NOT NULL," +
+            "`kills` int(100) NOT NULL," +
+            "PRIMARY KEY (`uuid`)" +
+            ");";
+
     // SQL creation stuff, You can leave the blow stuff untouched.
     public Connection getSQLConnection() {
         File dataFolder = new File(plugin.getDataFolder(), dbname+".db");
@@ -69,6 +76,7 @@ public class SQLite extends Database{
             s.executeUpdate(game_played);
             s.executeUpdate(game_won);
             s.executeUpdate(points_scored);
+            s.executeUpdate(kills);
 
             s.close();
         } catch (SQLException e) {

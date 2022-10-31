@@ -19,6 +19,7 @@ repositories {
     }
     maven { url = "https://repo.onarandombox.com/content/groups/public/" }
     maven { url = "https://repo.codemc.io/repository/maven-public/" }
+    maven { url 'https://jitpack.io' }
 
 }
 
@@ -28,6 +29,7 @@ dependencies {
     implementation 'fr.mrmicky:fastboard:1.2.1'
     compileOnly 'com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9'
     compileOnly fileTree(dir: 'C:\\Users\\luca-\\IdeaProjects\\TowerPlus\\libs', include: ['*.jar'])
+    compileOnly 'com.github.decentsoftware-eu:decentholograms:2.7.5'
 
 }
 shadowJar {
