@@ -27,27 +27,23 @@ public class Leaderboard {
         Hologram hologram = api.createHologram(location);
         holograms.add(hologram);
 
-
-
         new BukkitRunnable() {
             @Override
             public void run() {
-
-
                 new BukkitRunnable() {
                     @Override
                     public void run() {
 
-                        LinkedHashMap<String, Integer> data = getData("game_played",5);
-                        leaderboardUpdate(data,"game_played", hologram);
+                        ArrayList<String[]> data = getData("game_played",5);
+                        leaderboardUpdate(data,Main.leaderboard_game_played,"game_played", hologram);
                     }
                 }.runTaskLater(Main.getInstance(), 0);
 
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        LinkedHashMap<String, Integer> data = getData("game_won",5);
-                        leaderboardUpdate(data,"game_won", hologram);
+                        ArrayList<String[]> data = getData("game_won",5);
+                        leaderboardUpdate(data,Main.leaderboard_game_won,"game_won", hologram);
                     }
                 }.runTaskLater(Main.getInstance(), 20);
 
@@ -56,8 +52,8 @@ public class Leaderboard {
                     @Override
                     public void run() {
 
-                        LinkedHashMap<String, Integer> data = getData("points_scored",5);
-                        leaderboardUpdate(data,"points_scored", hologram);
+                        ArrayList<String[]> data = getData("points_scored",5);
+                        leaderboardUpdate(data,Main.leaderboard_points_scored,"points_scored", hologram);
                     }
                 }.runTaskLater(Main.getInstance(), 40);
 
@@ -66,29 +62,31 @@ public class Leaderboard {
         }.runTaskTimer(Main.getInstance(), 0, 60);
     }
 
-    private static void leaderboardUpdate(LinkedHashMap<String, Integer> data,String table, Hologram hologram) {
+    private static void leaderboardUpdate(ArrayList<String[]> data,ArrayList<String> config, String table, Hologram hologram) {
         hologram.getLines().clear();
-        hologram.getLines().appendText("Leaderboard");
-        hologram.getLines().appendText(table);
-        hologram.getLines().appendText(" ");
 
+        int index = 0;
 
-        int index = 1;
-        for (String key : data.keySet()) {
-            hologram.getLines().appendText( index + ". " + key + " : " + data.get(key));
-            index++;
-        }
-        if (data.size() < 5) {
-            for (int i = 0; i < 5 - data.size(); i++) {
-                hologram.getLines().appendText(index + ". ");
+        for (int i = 0; i < config.size(); i++) {
+            String line = config.get(i);
+            if (line.contains("%player%")) {
+                if (data.size() > index) {
+                    String[] playerData = data.get(index);
+                    line = line.replaceAll("%player%", playerData[0]);
+                    line = line.replaceAll("%value%", playerData[1]);
+                } else {
+                    line = line.replaceAll("%player%", "No data");
+                    line = line.replaceAll("%value%", "No data");
+                }
                 index++;
             }
+            hologram.getLines().appendText(line);
         }
     }
 
 
-    public static LinkedHashMap<String, Integer> getData(String table, int number) {
-        LinkedHashMap<String, Integer> data = new LinkedHashMap<>();
+    public static ArrayList<String[]> getData(String table, int number) {
+        ArrayList<String[]> data = new ArrayList<>();
 
         Connection conn = null;
         PreparedStatement ps = null;
@@ -98,7 +96,7 @@ public class Leaderboard {
             ps = conn.prepareStatement("SELECT * FROM " + table + " ORDER BY " + table + " DESC LIMIT " + number + ";");
             rs = ps.executeQuery();
             while (rs.next()) {
-                data.put(rs.getString("name"), rs.getInt(table));
+                data.add(new String[]{rs.getString("name"), rs.getString(table)});
             }
         } catch (SQLException ex) {
             Main.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);

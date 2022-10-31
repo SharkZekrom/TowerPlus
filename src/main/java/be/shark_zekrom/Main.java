@@ -136,9 +136,9 @@ public class Main extends JavaPlugin {
         config.addDefault("scoreboard.ingame", Arrays.asList("Red points: %red_points%", "Blue points: %blue_points%","players: %players%", "Time: %time%"));
         config.addDefault("scoreboard.endgame", Arrays.asList("","Finish",""));
 
-        config.addDefault("leaderboard.game_played",Arrays.asList("Leaderboard","game_played","","1. %1%","1. %2%","1. %3%","1. %4%","1. %5%"));
-        config.addDefault("leaderboard.game_won",Arrays.asList("Leaderboard","game_won","","1. %1%","1. %2%","1. %3%","1. %4%","1. %5%"));
-        config.addDefault("leaderboard.points_scored",Arrays.asList("Leaderboard","points_scored","","1. %1%","1. %2%","1. %3%","1. %4%","1. %5%"));
+        config.addDefault("leaderboard.game_played",Arrays.asList("Leaderboard","game_played","","1. %player% %value%","2. %player% %value%","3. %player% %value%","4. %player% %value%","5. %player% %value%"));
+        config.addDefault("leaderboard.game_won",Arrays.asList("Leaderboard","game_won","","1. %player% %value%","2. %player% %value%","3. %player% %value%","4. %player% %value%","5. %player% %value%"));
+        config.addDefault("leaderboard.points_scored",Arrays.asList("Leaderboard","points_scored","","1. %player% %value%","2. %player% %value%","3. %player% %value%","4. %player% %value%","5. %player% %value%"));
         config.addDefault("leaderboard.location.world", "world");
         config.addDefault("leaderboard.location.x", 0);
         config.addDefault("leaderboard.location.y", 0);
@@ -183,6 +183,10 @@ public class Main extends JavaPlugin {
         scoreboard_starting = (ArrayList<String>) config.getStringList("scoreboard.starting");
         scoreboard_ingame = (ArrayList<String>) config.getStringList("scoreboard.ingame");
         scoreboard_ending = (ArrayList<String>) config.getStringList("scoreboard.endgame");
+
+        leaderboard_game_played = (ArrayList<String>) config.getStringList("leaderboard.game_played");
+        leaderboard_game_won = (ArrayList<String>) config.getStringList("leaderboard.game_won");
+        leaderboard_points_scored = (ArrayList<String>) config.getStringList("leaderboard.points_scored");
 
         Leaderboard.leaderboard(api, new Location(Bukkit.getWorld(config.getString("leaderboard.location.world")), config.getDouble("leaderboard.location.x"),config.getDouble("leaderboard.location.y"),config.getDouble("leaderboard.location.z")));
 
