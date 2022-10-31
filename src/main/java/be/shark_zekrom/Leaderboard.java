@@ -24,10 +24,10 @@ public class Leaderboard {
     public static ArrayList<Hologram> holograms = new ArrayList<>();
 
     public static void initialize(HolographicDisplaysAPI api) {
-        leaderboardGame_won(api);
+        leaderboard(api);
     }
 
-    public static void leaderboardGame_won(HolographicDisplaysAPI api) {
+    public static void leaderboard(HolographicDisplaysAPI api) {
         Hologram hologram = api.createHologram(new Location(Bukkit.getWorld("world"), 0, -58, 0));
         holograms.add(hologram);
 
@@ -79,7 +79,7 @@ public class Leaderboard {
 
         int index = 1;
         for (String key : data.keySet()) {
-            hologram.getLines().appendText( index + ". " + Bukkit.getOfflinePlayer(UUID.fromString(key)).getName() + " : " + data.get(key));
+            hologram.getLines().appendText( index + ". " + key + " : " + data.get(key));
             index++;
         }
         if (data.size() < 5) {
@@ -102,7 +102,7 @@ public class Leaderboard {
             ps = conn.prepareStatement("SELECT * FROM " + table + " ORDER BY " + table + " DESC LIMIT " + number + ";");
             rs = ps.executeQuery();
             while (rs.next()) {
-                data.put(rs.getString("uuid"), rs.getInt(table));
+                data.put(rs.getString("name"), rs.getInt(table));
             }
         } catch (SQLException ex) {
             Main.getInstance().getLogger().log(Level.SEVERE, Errors.sqlConnectionExecute(), ex);

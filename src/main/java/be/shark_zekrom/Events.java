@@ -69,13 +69,19 @@ public class Events implements Listener {
     @EventHandler
     private void onJoin(PlayerJoinEvent event) {
         event.getPlayer().teleport(Main.lobby);
-         if (!Main.db.hasAccount(String.valueOf(event.getPlayer().getUniqueId()), "game_played")) {
-             Main.db.initializeAccount(event.getPlayer(), "game_played");
-         }
-        if (!Main.db.hasAccount(String.valueOf(event.getPlayer().getUniqueId()), "game_won")) {
+        if (Main.db.hasAccount(String.valueOf(event.getPlayer().getUniqueId()), "game_played")) {
+            Main.db.getAccountName(event.getPlayer(), "game_played");
+        } else {
+            Main.db.initializeAccount(event.getPlayer(), "game_played");
+        }
+        if (Main.db.hasAccount(String.valueOf(event.getPlayer().getUniqueId()), "game_won")) {
+            Main.db.getAccountName(event.getPlayer(), "game_won");
+        } else {
             Main.db.initializeAccount(event.getPlayer(), "game_won");
         }
-        if (!Main.db.hasAccount(String.valueOf(event.getPlayer().getUniqueId()), "points_scored")) {
+        if (Main.db.hasAccount(String.valueOf(event.getPlayer().getUniqueId()), "points_scored")) {
+            Main.db.getAccountName(event.getPlayer(), "points_scored");
+        } else {
             Main.db.initializeAccount(event.getPlayer(), "points_scored");
         }
     }

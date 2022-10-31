@@ -19,17 +19,20 @@ public class SQLite extends Database{
     }
 
     public String game_played = "CREATE TABLE IF NOT EXISTS game_played (" +
-                "`uuid` varchar(32) NOT NULL," +
-                "`game_played` int(100) NOT NULL," +
-                "PRIMARY KEY (`uuid`)" +
-                ");";
+            "`uuid` varchar(32) NOT NULL," +
+            "`name` varchar(100) NOT NULL," +
+            "`game_played` int(100) NOT NULL," +
+            "PRIMARY KEY (`uuid`)" +
+            ");";
     public String game_won = "CREATE TABLE IF NOT EXISTS game_won (" +
             "`uuid` varchar(32) NOT NULL," +
+            "`name` varchar(100) NOT NULL," +
             "`game_won` int(100) NOT NULL," +
             "PRIMARY KEY (`uuid`)" +
             ");";
     public String points_scored = "CREATE TABLE IF NOT EXISTS points_scored (" +
             "`uuid` varchar(32) NOT NULL," +
+            "`name` varchar(100) NOT NULL," +
             "`points_scored` int(100) NOT NULL," +
             "PRIMARY KEY (`uuid`)" +
             ");";

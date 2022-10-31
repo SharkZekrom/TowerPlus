@@ -137,9 +137,9 @@ public class Main extends JavaPlugin {
         config.addDefault("scoreboard.ingame", Arrays.asList("Red points: %red_points%", "Blue points: %blue_points%","players: %players%", "Time: %time%"));
         config.addDefault("scoreboard.endgame", Arrays.asList("","Finish",""));
 
-        config.addDefault("leaderboard.game_played",Arrays.asList("Leaderboard","game_played","","%1%","%2%","%3%","%4%","%5%"));
-        config.addDefault("leaderboard.game_won",Arrays.asList("Leaderboard","game_won","","%1%","%2%","%3%","%4%","%5%"));
-        config.addDefault("leaderboard.points_scored",Arrays.asList("Leaderboard","points_scored","","%1%","%2%","%3%","%4%","%5%"));
+        config.addDefault("leaderboard.game_played",Arrays.asList("Leaderboard","game_played","","1. %1%","1. %2%","1. %3%","1. %4%","1. %5%"));
+        config.addDefault("leaderboard.game_won",Arrays.asList("Leaderboard","game_won","","1. %1%","1. %2%","1. %3%","1. %4%","1. %5%"));
+        config.addDefault("leaderboard.points_scored",Arrays.asList("Leaderboard","points_scored","","1. %1%","1. %2%","1. %3%","1. %4%","1. %5%"));
 
 
         config.addDefault("message.leave_message", "§a%player% §7leave the game %players%/%max_players%");
