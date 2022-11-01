@@ -30,7 +30,7 @@ public class Main extends JavaPlugin {
     }
 
     public static MultiverseCore multiverseCore;
-    public static Hologram decentHolograms;
+    public static DecentHolograms decentHolograms;
     public static HolographicDisplays holographicDisplaysAPI;
 
 
@@ -50,9 +50,6 @@ public class Main extends JavaPlugin {
         db.load();
 
         multiverseCore = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
-       // decentHolograms = (Hologram) Bukkit.getServer().getPluginManager().getPlugin("DecentHolograms");
-        holographicDisplaysAPI = (HolographicDisplays) Bukkit.getServer().getPluginManager().getPlugin("HolographicDisplays");
-
         // if (core == null) {
          //   Bukkit.getLogger().severe("Multiverse-Core not found! Disabling plugin...");
         //}
@@ -204,11 +201,17 @@ public class Main extends JavaPlugin {
             new GameManager(maxPlayersPerTeam, minPlayersToStart, points, countdown);
         }
 
-        if (holographicDisplaysAPI != null) {
+
+
+
+
+
+
+        if (getServer().getPluginManager().getPlugin("DecentHolograms") != null) {
+            Leaderboard.leaderboardDecentHolograms(new Location(Bukkit.getWorld(config.getString("leaderboard.location.world")), config.getDouble("leaderboard.location.x"),config.getDouble("leaderboard.location.y"),config.getDouble("leaderboard.location.z")));
+        } else if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
             HolographicDisplaysAPI api = HolographicDisplaysAPI.get(this);
             Leaderboard.leaderboardHolographicDisplaysAPI(api, new Location(Bukkit.getWorld(config.getString("leaderboard.location.world")), config.getDouble("leaderboard.location.x"),config.getDouble("leaderboard.location.y"),config.getDouble("leaderboard.location.z")));
-        } else if (decentHolograms != null) {
-           Leaderboard.leaderboardDecentHolograms(new Location(Bukkit.getWorld(config.getString("leaderboard.location.world")), config.getDouble("leaderboard.location.x"),config.getDouble("leaderboard.location.y"),config.getDouble("leaderboard.location.z")));
 
         }
 

@@ -3,8 +3,11 @@ package be.shark_zekrom;
 import be.shark_zekrom.database.Errors;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.DecentHolograms;
+import eu.decentsoftware.holograms.api.holograms.HologramLine;
+import eu.decentsoftware.holograms.api.holograms.HologramPage;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -72,6 +75,7 @@ public class Leaderboard {
     public static void leaderboardDecentHolograms(Location location) {
         eu.decentsoftware.holograms.api.holograms.Hologram hologram = DHAPI.createHologram("TowerPlusLeaderboard", location);
         hologramsDecentHolograms.add(hologram);
+        HologramPage page = DHAPI.addHologramPage(hologram);
 
         new BukkitRunnable() {
             @Override
@@ -121,8 +125,6 @@ public class Leaderboard {
 
 
     private static void leaderboardUpdateHolographicDisplaysAPI(ArrayList<String[]> data,ArrayList<String> config, Hologram hologram) {
-        hologram.getLines().clear();
-
         int index = 0;
 
         for (String line : config) {
@@ -138,13 +140,16 @@ public class Leaderboard {
                 index++;
             }
             hologram.getLines().appendText(line);
+
         }
+        hologram.getLines().clear();
+
     }
 
     private static void leaderboardUpdateDecentHolograms(ArrayList<String[]> data,ArrayList<String> config, eu.decentsoftware.holograms.api.holograms.Hologram hologram) {
-        DHAPI.getHologram(hologram.getName()).getPages().clear();
 
         int index = 0;
+        int indexLine = 0;
 
         for (String line : config) {
             if (line.contains("%player%")) {
@@ -158,7 +163,15 @@ public class Leaderboard {
                 }
                 index++;
             }
-            DHAPI.addHologramLine(hologram, line);
+
+
+            if (DHAPI.getHologramLine(hologram.getPage(0), indexLine) == null) {
+                DHAPI.addHologramLine(hologram.getPage(0), line);
+
+            } else {
+                DHAPI.setHologramLine(hologram, indexLine, line);
+            }
+            indexLine++;
         }
     }
 
@@ -195,11 +208,20 @@ public class Leaderboard {
 
 
     public static void removeHolograms() {
-        for (Hologram hologram : hologramsHolographicDisplaysAPI) {
-            hologram.delete();
+
+        if (Bukkit.getServer().getPluginManager().getPlugin("DecentHolograms") != null) {
+            DHAPI.getHologram("TowerPlusLeaderboard").delete();
+        } else if (Bukkit.getServer().getPluginManager().getPlugin("HolographicDisplays") != null) {
+            for (Hologram hologram : hologramsHolographicDisplaysAPI) {
+                hologram.delete();
+            }
         }
-        DHAPI.getHologram("TowerPlusLeaderboard").delete();
     }
+
+
+
+
+
 
 
 }
