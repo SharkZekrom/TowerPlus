@@ -3,13 +3,16 @@ package be.shark_zekrom;
 import be.shark_zekrom.database.Errors;
 import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.DecentHolograms;
-import eu.decentsoftware.holograms.api.holograms.HologramLine;
 import eu.decentsoftware.holograms.api.holograms.HologramPage;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.HologramLines;
+import me.filoghost.holographicdisplays.api.hologram.line.HologramLine;
+import me.filoghost.holographicdisplays.api.hologram.line.TextHologramLine;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -126,7 +129,7 @@ public class Leaderboard {
 
     private static void leaderboardUpdateHolographicDisplaysAPI(ArrayList<String[]> data,ArrayList<String> config, Hologram hologram) {
         int index = 0;
-
+        int indexLine = 0;
         for (String line : config) {
             if (line.contains("%player%")) {
                 if (data.size() > index) {
@@ -139,10 +142,18 @@ public class Leaderboard {
                 }
                 index++;
             }
-            hologram.getLines().appendText(line);
+
+          //  if (hologram.getLines().size() == 0) {
+            //                hologram.getLines().appendText(line);
+            //            } else {
+            //                hologram.getLines().remove(indexLine);
+            //                hologram.getLines().insertText(indexLine,line);
+            //
+            //            }
+
+            indexLine++;
 
         }
-        hologram.getLines().clear();
 
     }
 
