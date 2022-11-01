@@ -5,6 +5,7 @@ import org.bukkit.*;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -62,6 +63,7 @@ public class GameManager {
         Location location = this.getRedSpawn();
         location.setWorld(Bukkit.getWorld(Main.worldPrefix + getGameIdByPlayer(player)));
         player.teleport(location);
+
         if (redPoints == Main.points) {
             this.setGameStatus(GameStatus.ENDING);
             endGame(this, "red");
@@ -358,21 +360,21 @@ public class GameManager {
             case WAITING:
                 ArrayList<String> scoreboard_waiting = Main.scoreboard_waiting;
                 for (String line : scoreboard_waiting) {
-                    newString.add(line.replace("%id%", String.valueOf(gameManager.getGameId())).replace("%players%", String.valueOf(gameManager.getPlayers().size())).replace("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)));
+                    newString.add(line.replace("%id%", String.valueOf(gameManager.getGameId())).replace("%players%", String.valueOf(gameManager.getBluePlayers().size() + gameManager.getRedPlayers().size())).replace("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)));
                 }
                 break;
             case STARTING:
                 ArrayList<String> scoreboard_starting = Main.scoreboard_starting;
 
                 for (String line : scoreboard_starting) {
-                    newString.add(line.replace("%id%", String.valueOf(gameManager.getGameId())).replace("%players%", String.valueOf(gameManager.getPlayers().size())).replace("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)).replaceAll("%countdown%", String.valueOf(gameManager.getCountdown())).replaceAll("%min_players%", String.valueOf(gameManager.getMinPlayers())));
+                    newString.add(line.replace("%id%", String.valueOf(gameManager.getGameId())).replace("%players%", String.valueOf(gameManager.getBluePlayers().size() + gameManager.getRedPlayers().size())).replace("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)).replaceAll("%countdown%", String.valueOf(gameManager.getCountdown())).replaceAll("%min_players%", String.valueOf(gameManager.getMinPlayers())));
                 }
                 break;
             case INGAME:
                 ArrayList<String> scoreboard_ingame = Main.scoreboard_ingame;
 
                 for (String line : scoreboard_ingame) {
-                    newString.add(line.replaceAll("%players%", String.valueOf(gameManager.getPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)).replaceAll("%status%", "Ingame").replaceAll("%red_points%", String.valueOf(gameManager.getRedPoints())).replaceAll("%blue_points%", String.valueOf(gameManager.getBluePoints())).replaceAll("%time%", Utils.getIntervalTime(gameManager.getTime())));
+                    newString.add(line.replaceAll("%players%", String.valueOf(gameManager.getBluePlayers().size() + gameManager.getRedPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)).replaceAll("%status%", "Ingame").replaceAll("%red_points%", String.valueOf(gameManager.getRedPoints())).replaceAll("%blue_points%", String.valueOf(gameManager.getBluePoints())).replaceAll("%time%", Utils.getIntervalTime(gameManager.getTime())));
                 }
                 break;
             case ENDING:
@@ -432,7 +434,6 @@ public class GameManager {
 
         for (Player players : gameManager.getPlayers()) {
             players.sendMessage("§cThe " + team + " team has won the game!");
-
             FastBoard board = boards.remove(players.getUniqueId());
             if (board != null) {
                 board.delete();
@@ -441,6 +442,7 @@ public class GameManager {
                 @Override
                 public void run() {
                     players.teleport(Main.lobby);
+                    players.removePotionEffect(PotionEffectType.INVISIBILITY);
                     returnInventory(players);
                 }
             }.runTaskLater(Main.getPlugin(Main.class), 20 * 5);
@@ -490,6 +492,7 @@ public class GameManager {
         for (Player player : gameManager.getPlayers()) {
             player.teleport(Main.lobby);
             player.sendMessage("§cThe game has been cancelled.");
+            player.removePotionEffect(PotionEffectType.INVISIBILITY);
 
             FastBoard board = boards.remove(player.getUniqueId());
             if (board != null) {

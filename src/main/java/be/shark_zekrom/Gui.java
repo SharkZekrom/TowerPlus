@@ -2,6 +2,7 @@ package be.shark_zekrom;
 
 import fr.mrmicky.fastboard.FastBoard;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -11,14 +12,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.concurrent.TimeUnit;
 
 public class Gui implements Listener {
 
@@ -36,8 +35,6 @@ public class Gui implements Listener {
             player.getOpenInventory().getTopInventory().clear();
             inventory = player.getOpenInventory().getTopInventory();
         }
-
-
 
         int[] slot = {0};
         for (GameManager gameManager : GameManager.games) {
@@ -165,6 +162,26 @@ public class Gui implements Listener {
                     } else {
                         player.sendMessage(Main.getInstance().getConfig().getString("message.full_game"));
                     }
+                } else if (event.getInventory().getItem(slot).getType() == Material.RED_WOOL) {
+                    String id = event.getInventory().getItem(slot).getItemMeta().getDisplayName().replaceAll("[ §a-zA-Z]", "");
+
+                    GameManager game = GameManager.getGameById(Integer.parseInt(id));
+                    game.addPlayer(player);
+                    FastBoard board = new FastBoard(player);
+                    board.updateTitle(Main.getInstance().getConfig().getString("scoreboard.title"));
+
+                    GameManager.boards.put(player.getUniqueId(), board);
+
+                    Location loc = game.getWaitingSpawn();
+                    loc.setWorld(Bukkit.getWorld(Main.worldPrefix + Integer.parseInt(id)));
+                    player.teleport(loc);
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            player.setGameMode(GameMode.CREATIVE);
+                        }
+                    }.runTaskLater(Main.getInstance(), 1);
                 }
             }
         } else if (event.getView().getTitle().equalsIgnoreCase(Main.inventory_team_name)) {
