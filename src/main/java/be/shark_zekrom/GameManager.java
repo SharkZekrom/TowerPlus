@@ -441,6 +441,7 @@ public class GameManager {
                 @Override
                 public void run() {
                     players.teleport(Main.lobby);
+                    returnInventory(players);
                 }
             }.runTaskLater(Main.getPlugin(Main.class), 20 * 5);
         }
