@@ -30,14 +30,11 @@ public class Main extends JavaPlugin {
     }
 
     public static MultiverseCore multiverseCore;
-    public static DecentHolograms decentHolograms;
-    public static HolographicDisplays holographicDisplaysAPI;
-
 
     public static Integer id = 1, maxPlayersPerTeam, minPlayersToStart, points, countdown, gamesAtTheSameTime;
-    public static String worldToClone, worldPrefix, inventory_game_name, inventory_game_id, inventory_team_name, inventory_team_red, inventory_team_blue, inventory_team_random, leaderboard_noData;
+    public static String worldToClone, worldPrefix, inventory_game_name, inventory_game_id, inventory_team_name, inventory_team_red, inventory_team_blue, inventory_team_random, leaderboard_noData, leaderboard_game_played, leaderboard_game_won,leaderboard_points_scored,leaderboard_kills;
     public static Location lobby;
-    public static ArrayList<String> inventory_waiting, inventory_starting, inventory_ingame, scoreboard_waiting, scoreboard_starting, scoreboard_ingame, scoreboard_ending, leaderboard_game_played, leaderboard_game_won, leaderboard_points_scored, leaderboard_kills;
+    public static ArrayList<String> inventory_waiting, inventory_starting, inventory_ingame, scoreboard_waiting, scoreboard_starting, scoreboard_ingame, scoreboard_ending, leaderboard;
 
     public static Database db;
 
@@ -139,11 +136,13 @@ public class Main extends JavaPlugin {
         config.addDefault("scoreboard.ingame", Arrays.asList("Red points » %red_points%", "Blue points » %blue_points%","players » %players%", "Time » %time%"));
         config.addDefault("scoreboard.endgame", Arrays.asList("","Finish",""));
 
-        config.addDefault("leaderboard.game_played",Arrays.asList("Leaderboard","game_played","","1. %player% %value%","2. %player% %value%","3. %player% %value%","4. %player% %value%","5. %player% %value%"));
-        config.addDefault("leaderboard.game_won",Arrays.asList("Leaderboard","game_won","","1. %player% %value%","2. %player% %value%","3. %player% %value%","4. %player% %value%","5. %player% %value%"));
-        config.addDefault("leaderboard.points_scored",Arrays.asList("Leaderboard","points_scored","","1. %player% %value%","2. %player% %value%","3. %player% %value%","4. %player% %value%","5. %player% %value%"));
-        config.addDefault("leaderboard.kills",Arrays.asList("Leaderboard","kills","","1. %player% %value%","2. %player% %value%","3. %player% %value%","4. %player% %value%","5. %player% %value%"));
+        config.addDefault("leaderboard.category.template",Arrays.asList("Leaderboard","%category%","","1. %player% %value%","2. %player% %value%","3. %player% %value%","4. %player% %value%","5. %player% %value%"));
         config.addDefault("leaderboard.noData", "No data");
+        config.addDefault("leaderboard.category.game_won", "game_won");
+        config.addDefault("leaderboard.category.game_played", "game_played");
+        config.addDefault("leaderboard.category.points_scored", "points_scored");
+        config.addDefault("leaderboard.category.kills", "kills");
+
         config.addDefault("leaderboard.location.world", "world");
         config.addDefault("leaderboard.location.x", 0);
         config.addDefault("leaderboard.location.y", 0);
@@ -168,6 +167,7 @@ public class Main extends JavaPlugin {
         countdown = config.getInt("countdown");
         points = config.getInt("pointsToWin");
         gamesAtTheSameTime = config.getInt("gamesAtTheSameTime");
+
         worldPrefix = config.getString("worldPrefix");
         inventory_game_name = config.getString("inventory.game.name");
         inventory_game_id = config.getString("inventory.game_id");
@@ -176,6 +176,10 @@ public class Main extends JavaPlugin {
         inventory_team_blue = config.getString("inventory.team.blue");
         inventory_team_random = config.getString("inventory.team.random");
         leaderboard_noData = config.getString("leaderboard.noData");
+        leaderboard_game_played = config.getString("leaderboard.category.game_played");
+        leaderboard_game_won = config.getString("leaderboard.category.game_won");
+        leaderboard_points_scored = config.getString("leaderboard.category.points_scored");
+        leaderboard_kills = config.getString("leaderboard.category.kills");
 
         worldToClone = config.getString("worldToClone");
 
@@ -190,10 +194,7 @@ public class Main extends JavaPlugin {
         scoreboard_ingame = (ArrayList<String>) config.getStringList("scoreboard.ingame");
         scoreboard_ending = (ArrayList<String>) config.getStringList("scoreboard.endgame");
 
-        leaderboard_game_played = (ArrayList<String>) config.getStringList("leaderboard.game_played");
-        leaderboard_game_won = (ArrayList<String>) config.getStringList("leaderboard.game_won");
-        leaderboard_points_scored = (ArrayList<String>) config.getStringList("leaderboard.points_scored");
-        leaderboard_kills = (ArrayList<String>) config.getStringList("leaderboard.kills");
+        leaderboard = (ArrayList<String>) config.getStringList("leaderboard.category.template");
 
         WorldManager.deleteAllWorld();
 
@@ -212,7 +213,6 @@ public class Main extends JavaPlugin {
         } else if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
             HolographicDisplaysAPI api = HolographicDisplaysAPI.get(this);
             Leaderboard.leaderboardHolographicDisplaysAPI(api, new Location(Bukkit.getWorld(config.getString("leaderboard.location.world")), config.getDouble("leaderboard.location.x"),config.getDouble("leaderboard.location.y"),config.getDouble("leaderboard.location.z")));
-
         }
 
 
