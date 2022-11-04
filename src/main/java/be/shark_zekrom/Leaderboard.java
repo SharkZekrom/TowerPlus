@@ -2,18 +2,11 @@ package be.shark_zekrom;
 
 import be.shark_zekrom.database.Errors;
 import eu.decentsoftware.holograms.api.DHAPI;
-import eu.decentsoftware.holograms.api.DecentHolograms;
-import eu.decentsoftware.holograms.api.holograms.HologramPage;
-import eu.decentsoftware.holograms.api.utils.scheduler.S;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
 import me.filoghost.holographicdisplays.api.hologram.Hologram;
-import me.filoghost.holographicdisplays.api.hologram.HologramLines;
-import me.filoghost.holographicdisplays.api.hologram.line.HologramLine;
-import me.filoghost.holographicdisplays.api.hologram.line.TextHologramLine;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

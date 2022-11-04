@@ -3,13 +3,8 @@ package be.shark_zekrom;
 import be.shark_zekrom.database.Database;
 import be.shark_zekrom.database.SQLite;
 import com.onarandombox.MultiverseCore.MultiverseCore;
-import eu.decentsoftware.holograms.api.DHAPI;
-import eu.decentsoftware.holograms.api.DecentHolograms;
-import eu.decentsoftware.holograms.api.DecentHologramsAPI;
-import eu.decentsoftware.holograms.api.holograms.Hologram;
 import fr.mrmicky.fastboard.FastBoard;
 import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
-import me.filoghost.holographicdisplays.plugin.HolographicDisplays;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -32,7 +27,7 @@ public class Main extends JavaPlugin {
     public static MultiverseCore multiverseCore;
 
     public static Integer id = 1, maxPlayersPerTeam, minPlayersToStart, points, countdown, gamesAtTheSameTime;
-    public static String worldToClone, worldPrefix, inventory_game_name, inventory_game_id, inventory_team_name, inventory_team_red, inventory_team_blue, inventory_team_random, leaderboard_noData, leaderboard_game_played, leaderboard_game_won,leaderboard_points_scored,leaderboard_kills;
+    public static String prefix, worldToClone, worldPrefix, inventory_game_name, inventory_game_id, inventory_team_name, inventory_team_red, inventory_team_blue, inventory_team_random, leaderboard_noData, leaderboard_game_played, leaderboard_game_won,leaderboard_points_scored,leaderboard_kills, noPermission;
     public static Location lobby;
     public static ArrayList<String> inventory_waiting, inventory_starting, inventory_ingame, scoreboard_waiting, scoreboard_starting, scoreboard_ingame, scoreboard_ending, leaderboard;
 
@@ -63,6 +58,7 @@ public class Main extends JavaPlugin {
 
 
         FileConfiguration config = getConfig();
+        config.addDefault("prefix", "§b[Tower+] ");
         config.addDefault("worldToClone", "tower");
         config.addDefault("worldPrefix", "TowerPlus-");
         config.addDefault("pointsToWin", 10);
@@ -153,10 +149,12 @@ public class Main extends JavaPlugin {
         config.addDefault("message.join_message", "§a%player% §7join the game %players%/%max_players%");
         config.addDefault("message.start_message", "§aThe game start in %countdown%");
         config.addDefault("message.full_game", "§cThe game is full");
+        config.addDefault("message.already_in_game", "§cYou are already in a game");
         config.addDefault("message.more_players", "§cNot enough players to start the game");
         config.addDefault("message.kill_message", "§a%player% §7kill §a%killed%");
         config.addDefault("message.death_void_message", "§a%player% §7fall in the void");
         config.addDefault("message.death_fall_message", "§a%player% §7fall");
+        config.addDefault("message.noPermission", "§cYou don't have permission to do this");
 
         config.options().copyDefaults(true);
         saveConfig();
@@ -168,6 +166,8 @@ public class Main extends JavaPlugin {
         points = config.getInt("pointsToWin");
         gamesAtTheSameTime = config.getInt("gamesAtTheSameTime");
 
+
+        prefix = config.getString("prefix");
         worldPrefix = config.getString("worldPrefix");
         inventory_game_name = config.getString("inventory.game.name");
         inventory_game_id = config.getString("inventory.game_id");
@@ -180,6 +180,7 @@ public class Main extends JavaPlugin {
         leaderboard_game_won = config.getString("leaderboard.category.game_won");
         leaderboard_points_scored = config.getString("leaderboard.category.points_scored");
         leaderboard_kills = config.getString("leaderboard.category.kills");
+        noPermission = config.getString("message.noPermission");
 
         worldToClone = config.getString("worldToClone");
 

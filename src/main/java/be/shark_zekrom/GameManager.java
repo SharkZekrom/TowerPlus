@@ -456,7 +456,9 @@ public class GameManager {
         gameManager.setGameStatus(GameManager.GameStatus.INGAME);
         gameManager.setTime(System.currentTimeMillis());
 
-        tasks.get(gameManager).cancel();
+        if (tasks.get(gameManager) != null) {
+            tasks.get(gameManager).cancel();
+        }
 
         for (Player players : gameManager.getPlayers()) {
             players.getInventory().clear();
