@@ -25,11 +25,11 @@ public class Commands implements CommandExecutor , TabExecutor {
                 if (GameManager.hasPlayer(player)) {
                     player.sendMessage(Main.prefix + Main.getInstance().getConfig().getString("messages.already_in_game"));
                 } else {
+                    Gui.pages.put(player, 1);
                     runnableInventory.put(player, new BukkitRunnable() {
                         @Override
                         public void run() {
-
-                            Gui.allGames(player);
+                            Gui.allGames(player,Gui.pages.get(player));
 
 
                         }

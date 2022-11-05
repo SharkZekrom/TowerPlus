@@ -18,11 +18,13 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Gui implements Listener {
 
+    public static HashMap<Player, Integer> pages = new HashMap<>();
 
-    public static void allGames(Player player) {
+    public static void allGames(Player player, int page) {
 
         Inventory inventory;
 
@@ -36,44 +38,64 @@ public class Gui implements Listener {
             inventory = player.getOpenInventory().getTopInventory();
         }
 
-        int[] slot = {0};
-        for (GameManager gameManager : GameManager.games) {
-            if (gameManager.getGameStatus() != GameManager.GameStatus.ENDING) {
+        if (page > 1) {
+            Utils.previous(inventory);
+        }
 
-                ItemStack itemStack = null;
-                ArrayList<String> lore = new ArrayList<>();
-                switch (gameManager.getGameStatus()) {
-                    case WAITING -> {
-                        itemStack = new ItemStack(Material.GREEN_WOOL);
-                        for (String string : Main.inventory_waiting) {
-                            String newString = string.replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)).replaceAll("%status%", "Waiting").replaceAll("%players%", String.valueOf(gameManager.getPlayers().size()));
-                            lore.add(newString);
+
+        int index = 0;
+        int[] slot = {10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34, 37, 38, 39, 40, 41, 42, 43};
+
+        for (int i = 0; i < 28; i++) {
+
+            if (GameManager.games.size() > i + (page - 1) * 28) {
+                GameManager gameManager = GameManager.games.get(i + (page - 1) * 28);
+
+                if (gameManager.getGameStatus() != GameManager.GameStatus.ENDING) {
+
+                    ItemStack itemStack = null;
+                    ArrayList<String> lore = new ArrayList<>();
+                    switch (gameManager.getGameStatus()) {
+                        case WAITING -> {
+                            itemStack = new ItemStack(Material.GREEN_WOOL);
+                            for (String string : Main.inventory_waiting) {
+                                String newString = string.replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)).replaceAll("%status%", "Waiting").replaceAll("%players%", String.valueOf(gameManager.getPlayers().size()));
+                                lore.add(newString);
+                            }
+                        }
+                        case STARTING -> {
+                            itemStack = new ItemStack(Material.YELLOW_WOOL);
+                            for (String string : Main.inventory_starting) {
+                                String newString = string.replaceAll("%players%", String.valueOf(gameManager.getPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)).replaceAll("%status%", "Starting").replaceAll("%countdown%", String.valueOf(gameManager.getCountdown()));
+                                lore.add(newString);
+                            }
+                        }
+                        case INGAME -> {
+                            itemStack = new ItemStack(Material.RED_WOOL);
+
+
+                            for (String string : Main.inventory_ingame) {
+                                String newString = string.replaceAll("%players%", String.valueOf(gameManager.getPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)).replaceAll("%status%", "Ingame").replaceAll("%red_points%", String.valueOf(gameManager.getRedPoints())).replaceAll("%blue_points%", String.valueOf(gameManager.getBluePoints())).replaceAll("%time%", Utils.getIntervalTime(gameManager.getTime()));
+                                lore.add(newString);
+                            }
                         }
                     }
-                    case STARTING -> {
-                        itemStack = new ItemStack(Material.YELLOW_WOOL);
-                        for (String string : Main.inventory_starting) {
-                            String newString = string.replaceAll("%players%", String.valueOf(gameManager.getPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)).replaceAll("%status%", "Starting").replaceAll("%countdown%", String.valueOf(gameManager.getCountdown()));
-                            lore.add(newString);
-                        }
-                    }
-                    case INGAME -> {
-                        itemStack = new ItemStack(Material.RED_WOOL);
+                    ItemMeta itemMeta = itemStack.getItemMeta();
+                    itemMeta.setLore(lore);
+                    itemMeta.setDisplayName(Main.inventory_game_id.replaceAll("%id%", String.valueOf(gameManager.getGameId())));
 
+                    itemStack.setItemMeta(itemMeta);
 
-                        for (String string : Main.inventory_ingame) {
-                            String newString = string.replaceAll("%players%", String.valueOf(gameManager.getPlayers().size())).replaceAll("%max_players%", String.valueOf(gameManager.getMaxPlayers() * 2)).replaceAll("%status%", "Ingame").replaceAll("%red_points%", String.valueOf(gameManager.getRedPoints())).replaceAll("%blue_points%", String.valueOf(gameManager.getBluePoints())).replaceAll("%time%", Utils.getIntervalTime(gameManager.getTime()));
-                            lore.add(newString);
+                    inventory.setItem(slot[index++], itemStack);
+
+                    if (index == 28) {
+                        if (GameManager.games.size() > (i + (page - 1) * 28) + 1) {
+                            Utils.next(inventory);
                         }
+                        return;
+
                     }
                 }
-                ItemMeta itemMeta = itemStack.getItemMeta();
-                itemMeta.setLore(lore);
-                itemMeta.setDisplayName(Main.inventory_game_id.replaceAll("%id%", String.valueOf(gameManager.getGameId())));
-
-                itemStack.setItemMeta(itemMeta);
-
-                inventory.setItem(slot[0]++, itemStack);
             }
         }
     }
@@ -182,6 +204,14 @@ public class Gui implements Listener {
                             player.setGameMode(GameMode.CREATIVE);
                         }
                     }.runTaskLater(Main.getInstance(), 1);
+                } else if (event.getInventory().getItem(slot).getType() == Material.ARROW) {
+                    if (slot == 48) {
+                        pages.put(player, pages.get(player) - 1);
+                        allGames(player, pages.get(player) );
+                    } else if (slot == 50) {
+                        pages.put(player, pages.get(player) + 1);
+                        allGames(player, pages.get(player));
+                    }
                 }
             }
         } else if (event.getView().getTitle().equalsIgnoreCase(Main.inventory_team_name)) {

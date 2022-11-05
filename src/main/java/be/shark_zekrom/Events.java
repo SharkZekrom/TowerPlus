@@ -106,7 +106,6 @@ public class Events implements Listener {
 
     @EventHandler
     private void onInventoryClose(InventoryCloseEvent event) {
-
         if (Commands.runnableInventory.containsKey(event.getPlayer())) {
             Commands.runnableInventory.get(event.getPlayer()).cancel();
             Commands.runnableInventory.remove(event.getPlayer());

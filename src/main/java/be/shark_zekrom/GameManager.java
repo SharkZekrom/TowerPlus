@@ -14,7 +14,7 @@ import java.util.*;
 public class GameManager {
 
     public static final Map<UUID, FastBoard> boards = new HashMap<>();
-    public static ArrayList<GameManager> games = new ArrayList<>();
+    public static LinkedList<GameManager> games = new LinkedList<>();
     public static Location waitingSpawn, redSpawn, blueSpawn, pool_red_1 , pool_red_2, pool_blue_1 , pool_blue_2;
 
 
@@ -253,7 +253,7 @@ public class GameManager {
         setMaxPoints(maxPoints);
         setMaxPlayers(maxPlayersPerTeam);
 
-        WorldManager.cloneWorld();
+       // WorldManager.cloneWorld();
 
         waitingSpawn = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.waiting-spawn.x"), Main.getInstance().getConfig().getDouble("location.waiting-spawn.y"), Main.getInstance().getConfig().getDouble("location.waiting-spawn.z"), (float) Main.getInstance().getConfig().getDouble("location.waiting-spawn.yaw"), (float) Main.getInstance().getConfig().getDouble("location.waiting-spawn.pitch"));
         blueSpawn = new Location(Bukkit.getWorld(Main.worldPrefix + Main.id), Main.getInstance().getConfig().getDouble("location.spawn.blue.x"), Main.getInstance().getConfig().getDouble("location.spawn.blue.y"), Main.getInstance().getConfig().getDouble("location.spawn.blue.z"), (float) Main.getInstance().getConfig().getDouble("location.spawn.blue.yaw"), (float) Main.getInstance().getConfig().getDouble("location.spawn.blue.pitch"));
